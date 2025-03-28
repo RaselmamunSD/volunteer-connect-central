@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Users, MusicIcon, UserCog, UserCheck } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,30 +12,31 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   const navItems = [
     { 
-      name: 'Home', 
+      name: 'হোম', 
       path: '/', 
       icon: <Home className="mr-2 h-4 w-4" /> 
     },
     { 
-      name: 'Volunteer', 
+      name: 'স্বেচ্ছাসেবক', 
       path: '/volunteer', 
       icon: <UserCheck className="mr-2 h-4 w-4" /> 
     },
     { 
-      name: 'Management Team', 
+      name: 'আয়োজক কমিটি', 
       path: '/team', 
       icon: <Users className="mr-2 h-4 w-4" /> 
     },
     { 
-      name: 'Concert', 
+      name: 'অনুষ্ঠান', 
       path: '/concert', 
       icon: <MusicIcon className="mr-2 h-4 w-4" /> 
     },
     { 
-      name: 'Admin', 
+      name: 'অ্যাডমিন', 
       path: '/admin', 
       icon: <UserCog className="mr-2 h-4 w-4" /> 
     }
@@ -46,7 +48,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container flex h-16 items-center">
           <div className="mr-4 flex font-bold text-2xl text-primary">
             <Link to="/" className="flex items-center gap-2">
-              <span className="hidden md:inline-block">EventConnect</span>
+              <span className="hidden md:inline-block">পূর্নমিলনী-২০২৬</span>
+              <span className="md:hidden">৩০ বছর</span>
             </Link>
           </div>
           <nav className="flex-1 flex items-center justify-between">
@@ -102,8 +105,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <footer className="border-t py-6 md:py-0">
         <div className="container flex flex-col md:h-16 items-center justify-between gap-4 md:flex-row">
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            Built with ❤️ by EventConnect Team &copy; {new Date().getFullYear()}
+            হাড়ীভাঙ্গা তা'লিমুল ইনসান হাফিজিয়া ক্বওমী মাদ্রাসা &copy; {new Date().getFullYear()}
           </p>
+          <div className="text-center text-sm leading-loose text-muted-foreground md:text-right">
+            যোগাযোগ: ০১৭৬৮৮০৭২২৬
+          </div>
         </div>
       </footer>
     </div>

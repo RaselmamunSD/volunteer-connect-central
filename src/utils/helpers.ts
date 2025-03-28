@@ -1,13 +1,13 @@
 
-// Format currency
+// Format currency for Bengali
 export const formatCurrency = (amount: number): string => {
-  return `${amount.toLocaleString()} Tk`;
+  return `${amount.toLocaleString()} টাকা`;
 };
 
 // Format phone number
 export const formatPhone = (phone: string): string => {
   if (!phone) return '';
-  return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+  return phone;
 };
 
 // Calculate total contributions
@@ -18,14 +18,19 @@ export const calculateTotal = (items: { contribution?: number, amount?: number }
   }, 0);
 };
 
-// Format date
+// Format date for Bengali
 export const formatDate = (dateString: string): string => {
-  const options: Intl.DateTimeFormatOptions = { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+  // Convert to Date object
+  const date = new Date(dateString);
+  
+  // Bengali month names
+  const bengaliMonths = [
+    'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+    'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'
+  ];
+  
+  // Format the date in Bengali style
+  return `${date.getDate()} ${bengaliMonths[date.getMonth()]}, ${date.getFullYear()}`;
 };
 
 // Generate random ID
@@ -33,21 +38,29 @@ export const generateId = (): number => {
   return Math.floor(Math.random() * 10000);
 };
 
-// Validate form data
+// Validate form data with Bengali error messages
 export const validateForm = (data: Record<string, any>): Record<string, string> => {
   const errors: Record<string, string> = {};
   
+  const fieldNames: Record<string, string> = {
+    name: 'নাম',
+    phone: 'ফোন নম্বর',
+    address: 'ঠিকানা',
+    contribution: 'অবদান',
+    amount: 'পরিমাণ'
+  };
+  
   Object.entries(data).forEach(([key, value]) => {
     if (!value && key !== 'contribution' && key !== 'amount') {
-      errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required`;
+      errors[key] = `${fieldNames[key] || key} প্রয়োজন`;
     }
     
     if (key === 'phone' && value && !/^\d{11}$/.test(value)) {
-      errors[key] = 'Phone number must be 11 digits';
+      errors[key] = 'ফোন নম্বর ১১ সংখ্যার হতে হবে';
     }
     
     if ((key === 'contribution' || key === 'amount') && value && isNaN(Number(value))) {
-      errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be a number`;
+      errors[key] = `${fieldNames[key]} একটি সংখ্যা হতে হবে`;
     }
   });
   

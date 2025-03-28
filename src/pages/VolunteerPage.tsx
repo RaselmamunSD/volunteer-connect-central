@@ -12,11 +12,11 @@ const VolunteerPage = () => {
   return (
     <div className="container py-6">
       <div className="banner-gradient rounded-lg p-6 mb-8 text-white">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Join Our Volunteer Team</h1>
-        <p className="text-lg md:text-xl mb-4">Make a difference by contributing your time and skills</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">স্বেচ্ছাসেবক রেজিস্ট্রেশন</h1>
+        <p className="text-lg md:text-xl mb-4">আপনার অবদান রাখুন পূর্নমিলনী অনুষ্ঠানে</p>
         <div className="flex flex-wrap gap-4">
           <Button asChild variant="secondary">
-            <Link to="/volunteer/login">Volunteer Login</Link>
+            <Link to="/volunteer/login">স্বেচ্ছাসেবক লগইন</Link>
           </Button>
         </div>
       </div>
@@ -26,18 +26,18 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserCheck className="h-5 w-5 text-primary" />
-              <CardTitle>Register</CardTitle>
+              <CardTitle>রেজিস্ট্রেশন</CardTitle>
             </div>
             <CardDescription>
-              Sign up to become a volunteer
+              স্বেচ্ছাসেবক হিসেবে নিবন্ধন করুন
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Join our team of dedicated volunteers and help make our events successful. Your contribution matters!</p>
+            <p>আমাদের স্বেচ্ছাসেবক দলে যোগ দিন এবং পূর্নমিলনী অনুষ্ঠানকে সফল করতে সহায়তা করুন। আপনার অবদান গুরুত্বপূর্ণ!</p>
           </CardContent>
           <CardFooter>
             <Button asChild>
-              <Link to="/volunteer/login">Register Now</Link>
+              <Link to="/volunteer/login">রেজিস্ট্রেশন করুন</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -46,18 +46,18 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Heart className="h-5 w-5 text-primary" />
-              <CardTitle>Contribute</CardTitle>
+              <CardTitle>অনুদান</CardTitle>
             </div>
             <CardDescription>
-              Make donations to support our cause
+              আমাদের উদ্যোগকে সমর্থন করতে অনুদান দিন
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Financial contributions help us organize better events and reach more people in need.</p>
+            <p>আর্থিক অবদান আমাদের বৃহত্তর আকারে অনুষ্ঠান আয়োজন করতে এবং আরও বেশি মানুষকে সম্পৃক্ত করতে সাহায্য করে।</p>
           </CardContent>
           <CardFooter>
             <Button asChild>
-              <Link to="/volunteer/login">Donate Now</Link>
+              <Link to="/volunteer/login">অনুদান দিন</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -66,18 +66,18 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              <CardTitle>Participate</CardTitle>
+              <CardTitle>অংশগ্রহণ</CardTitle>
             </div>
             <CardDescription>
-              Join upcoming volunteer events
+              আসন্ন পূর্নমিলনী অনুষ্ঠানে যোগ দিন
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Check our event calendar and sign up for volunteer opportunities that match your interests.</p>
+            <p>পূর্নমিলনী অনুষ্ঠানের ক্যালেন্ডার দেখুন এবং আপনার আগ্রহের সাথে মিলে যায় এমন স্বেচ্ছাসেবক সুযোগের জন্য সাইন আপ করুন।</p>
           </CardContent>
           <CardFooter>
             <Button asChild>
-              <Link to="/concert">View Events</Link>
+              <Link to="/concert">অনুষ্ঠান দেখুন</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -88,10 +88,10 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Award className="h-5 w-5 text-primary" />
-              <CardTitle>Our Volunteer Stars</CardTitle>
+              <CardTitle>আমাদের স্বেচ্ছাসেবকগণ</CardTitle>
             </div>
             <CardDescription>
-              Recognizing the amazing contributions of our volunteers
+              স্বেচ্ছাসেবকদের অসাধারণ অবদানের স্বীকৃতি
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -106,7 +106,7 @@ const VolunteerPage = () => {
                     <p className="text-sm">{volunteer.address}</p>
                   </CardContent>
                   <CardFooter className="flex justify-between">
-                    <p className="text-sm">Contribution</p>
+                    <p className="text-sm">অবদান</p>
                     <Badge>{formatCurrency(volunteer.contribution)}</Badge>
                   </CardFooter>
                 </Card>
@@ -119,22 +119,22 @@ const VolunteerPage = () => {
       <div className="mb-8">
         <Card>
           <CardHeader>
-            <CardTitle>Volunteer Benefits</CardTitle>
-            <CardDescription>Why you should join our volunteer program</CardDescription>
+            <CardTitle>স্বেচ্ছাসেবকদের সুবিধা</CardTitle>
+            <CardDescription>কেন আপনি আমাদের স্বেচ্ছাসেবক প্রোগ্রামে যোগ দেবেন</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Community Impact</h3>
-                <p className="text-sm text-muted-foreground">Make a real difference in your community through meaningful service.</p>
+                <h3 className="font-medium mb-2">সামাজিক প্রভাব</h3>
+                <p className="text-sm text-muted-foreground">আপনার সম্প্রদায়ে অর্থপূর্ণ সেবার মাধ্যমে একটি বাস্তব পার্থক্য তৈরি করুন।</p>
               </div>
               <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Skill Development</h3>
-                <p className="text-sm text-muted-foreground">Learn new skills and gain valuable experience for your career.</p>
+                <h3 className="font-medium mb-2">দক্ষতা উন্নয়ন</h3>
+                <p className="text-sm text-muted-foreground">নতুন দক্ষতা শিখুন এবং আপনার কর্মজীবনের জন্য মূল্যবান অভিজ্ঞতা অর্জন করুন।</p>
               </div>
               <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Networking</h3>
-                <p className="text-sm text-muted-foreground">Connect with like-minded individuals and expand your professional network.</p>
+                <h3 className="font-medium mb-2">নেটওয়ার্কিং</h3>
+                <p className="text-sm text-muted-foreground">একই মনোভাবাপন্ন ব্যক্তিদের সাথে সংযোগ করুন এবং আপনার পেশাদার নেটওয়ার্ক সম্প্রসারিত করুন।</p>
               </div>
             </div>
           </CardContent>

@@ -59,8 +59,8 @@ const VolunteerLogin = () => {
     // Registration would typically send data to a server
     // For this demo, we just show a success message
     toast({
-      title: "Registration Successful",
-      description: "Thank you for registering as a volunteer!",
+      title: "রেজিস্ট্রেশন সফল হয়েছে",
+      description: "স্বেচ্ছাসেবক হিসাবে নিবন্ধনের জন্য আপনাকে ধন্যবাদ!",
     });
     
     // Reset form
@@ -84,8 +84,8 @@ const VolunteerLogin = () => {
     // Login would typically verify credentials with a server
     // For this demo, we just show a success message
     toast({
-      title: "Login Successful",
-      description: "Welcome back to the volunteer portal!",
+      title: "লগইন সফল হয়েছে",
+      description: "স্বেচ্ছাসেবক পোর্টালে আপনাকে স্বাগতম!",
     });
     
     // Reset form
@@ -99,72 +99,72 @@ const VolunteerLogin = () => {
       <div className="max-w-md mx-auto">
         <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="register">Register</TabsTrigger>
-            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="register">নিবন্ধন</TabsTrigger>
+            <TabsTrigger value="login">লগইন</TabsTrigger>
           </TabsList>
           
           <TabsContent value="register">
             <Card>
               <CardHeader>
-                <CardTitle>Volunteer Registration</CardTitle>
-                <CardDescription>Register as a new volunteer</CardDescription>
+                <CardTitle>স্বেচ্ছাসেবক নিবন্ধন</CardTitle>
+                <CardDescription>নতুন স্বেচ্ছাসেবক হিসাবে নিবন্ধন করুন</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleRegisterSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="register-name">Name</Label>
+                    <Label htmlFor="register-name">নাম</Label>
                     <Input 
                       id="register-name" 
                       name="name"
                       value={registerForm.name} 
                       onChange={handleRegisterChange} 
-                      placeholder="Enter your name"
+                      placeholder="আপনার নাম লিখুন"
                       className={registerErrors.name ? "border-red-500" : ""}
                     />
                     {registerErrors.name && <p className="text-sm text-red-500">{registerErrors.name}</p>}
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-phone">Phone Number</Label>
+                    <Label htmlFor="register-phone">ফোন নম্বর</Label>
                     <Input 
                       id="register-phone" 
                       name="phone"
                       value={registerForm.phone} 
                       onChange={handleRegisterChange} 
-                      placeholder="Enter your phone number"
+                      placeholder="আপনার ফোন নম্বর লিখুন"
                       className={registerErrors.phone ? "border-red-500" : ""}
                     />
                     {registerErrors.phone && <p className="text-sm text-red-500">{registerErrors.phone}</p>}
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-address">Address</Label>
+                    <Label htmlFor="register-address">ঠিকানা</Label>
                     <Input 
                       id="register-address" 
                       name="address"
                       value={registerForm.address} 
                       onChange={handleRegisterChange} 
-                      placeholder="Enter your address"
+                      placeholder="আপনার ঠিকানা লিখুন"
                       className={registerErrors.address ? "border-red-500" : ""}
                     />
                     {registerErrors.address && <p className="text-sm text-red-500">{registerErrors.address}</p>}
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-contribution">Contribution (TK)</Label>
+                    <Label htmlFor="register-contribution">অবদান (টাকা)</Label>
                     <Input 
                       id="register-contribution" 
                       name="contribution"
                       type="number"
                       value={registerForm.contribution} 
                       onChange={handleRegisterChange} 
-                      placeholder="Enter contribution amount"
+                      placeholder="অবদানের পরিমাণ লিখুন"
                       className={registerErrors.contribution ? "border-red-500" : ""}
                     />
                     {registerErrors.contribution && <p className="text-sm text-red-500">{registerErrors.contribution}</p>}
                   </div>
                   
-                  <Button type="submit" className="w-full">Register</Button>
+                  <Button type="submit" className="w-full">নিবন্ধন করুন</Button>
                 </form>
               </CardContent>
             </Card>
@@ -173,30 +173,30 @@ const VolunteerLogin = () => {
           <TabsContent value="login">
             <Card>
               <CardHeader>
-                <CardTitle>Volunteer Login</CardTitle>
-                <CardDescription>Log in to your volunteer account</CardDescription>
+                <CardTitle>স্বেচ্ছাসেবক লগইন</CardTitle>
+                <CardDescription>আপনার স্বেচ্ছাসেবক অ্যাকাউন্টে লগইন করুন</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLoginSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-phone">Phone Number</Label>
+                    <Label htmlFor="login-phone">ফোন নম্বর</Label>
                     <Input 
                       id="login-phone" 
                       name="phone"
                       value={loginForm.phone} 
                       onChange={handleLoginChange} 
-                      placeholder="Enter your phone number"
+                      placeholder="আপনার ফোন নম্বর লিখুন"
                       className={loginErrors.phone ? "border-red-500" : ""}
                     />
                     {loginErrors.phone && <p className="text-sm text-red-500">{loginErrors.phone}</p>}
                   </div>
                   
-                  <Button type="submit" className="w-full">Login</Button>
+                  <Button type="submit" className="w-full">লগইন</Button>
                 </form>
               </CardContent>
               <CardFooter className="flex justify-center">
                 <Button variant="link" onClick={() => setActiveTab('register')}>
-                  Don't have an account? Register
+                  অ্যাকাউন্ট নেই? নিবন্ধন করুন
                 </Button>
               </CardFooter>
             </Card>

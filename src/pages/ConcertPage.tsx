@@ -13,11 +13,11 @@ const ConcertPage = () => {
   return (
     <div className="container py-6">
       <div className="banner-gradient rounded-lg p-6 mb-8 text-white">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Upcoming Concerts</h1>
-        <p className="text-lg md:text-xl mb-4">Book your tickets for these exciting events</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">পূর্নমিলনী-২০২৬</h1>
+        <p className="text-lg md:text-xl mb-4">"এসো মিলি একত্রে স্মৃতির বন্ধনে ভ্রাতৃত্বের বন্ধনে"</p>
         <div className="flex flex-wrap gap-4">
           <Button asChild variant="secondary">
-            <Link to="/">Book Now</Link>
+            <Link to="/">যোগদান করুন</Link>
           </Button>
         </div>
       </div>
@@ -53,7 +53,7 @@ const ConcertPage = () => {
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full">
-                <Link to="/">Book Tickets</Link>
+                <Link to="/">রেজিস্ট্রেশন করুন</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -62,34 +62,34 @@ const ConcertPage = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Concert Information</CardTitle>
-          <CardDescription>Important details about our concerts</CardDescription>
+          <CardTitle>অনুষ্ঠানের তথ্য</CardTitle>
+          <CardDescription>পূর্নমিলনী-২০২৬ সম্পর্কে গুরুত্বপূর্ণ তথ্য</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="border rounded-lg p-4">
-              <h3 className="font-medium mb-2">Ticket Information</h3>
+              <h3 className="font-medium mb-2">স্থান</h3>
               <p className="text-sm text-muted-foreground">
-                Tickets must be purchased in advance. All sales are final, no refunds or exchanges.
+                হাড়ীভাঙ্গা তা'লিমুল ইনসান হাফিজিয়া ক্বওমী মাদ্রাসা প্রাঙ্গণ, লালমনিরহাট
               </p>
             </div>
             <div className="border rounded-lg p-4">
-              <h3 className="font-medium mb-2">Venue Policies</h3>
+              <h3 className="font-medium mb-2">তারিখ</h3>
               <p className="text-sm text-muted-foreground">
-                Outside food and drinks are not allowed. Security checks will be conducted at entry.
+                ঈদুল আযহার তৃতীয় দিন, ২০২৬
               </p>
             </div>
             <div className="border rounded-lg p-4">
-              <h3 className="font-medium mb-2">COVID-19 Guidelines</h3>
+              <h3 className="font-medium mb-2">যোগাযোগ</h3>
               <p className="text-sm text-muted-foreground">
-                Masks are recommended. Please follow social distancing guidelines where possible.
+                ফোন: ০১৭৬৮৮০৭২২৬
               </p>
             </div>
           </div>
         </CardContent>
         <CardFooter className="justify-center">
           <Button asChild variant="outline">
-            <Link to="/">Contact for Group Bookings</Link>
+            <Link to="/volunteer">স্বেচ্ছাসেবক হিসেবে যোগদান করুন</Link>
           </Button>
         </CardFooter>
       </Card>

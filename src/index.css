@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -91,11 +93,12 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Noto Sans Bengali', sans-serif;
   }
 }
 
 .banner-gradient {
-  background: linear-gradient(135deg, #4CAF50 0%, #1a237e 100%);
+  background: linear-gradient(135deg, #1a237e 0%, #4CAF50 100%);
 }
 
 .event-card {
@@ -105,4 +108,39 @@
 .event-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom animation for the reunion banner */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, #1a237e, #4CAF50, #f44336, #E91E63);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+/* Improved mobile responsiveness */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem !important;
+  }
+  
+  p {
+    font-size: 0.875rem !important;
+  }
 }

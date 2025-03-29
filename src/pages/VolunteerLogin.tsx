@@ -4,26 +4,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { generateId, validateForm } from '@/utils/helpers';
+import { validateForm } from '@/utils/helpers';
 
 const VolunteerLogin = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('register');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  // Registration form state
-  const [registerForm, setRegisterForm] = useState({
-    name: '',
-    phone: '',
-    address: '',
-    contribution: ''
-  });
   
   // Login form state
   const [loginForm, setLoginForm] = useState({
-    phone: '',
+    username: '',
+    password: ''
   });
   
   // Manual booking form state
@@ -35,18 +26,8 @@ const VolunteerLogin = () => {
   });
   
   // Form errors
-  const [registerErrors, setRegisterErrors] = useState<Record<string, string>>({});
   const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
   const [bookingErrors, setBookingErrors] = useState<Record<string, string>>({});
-  
-  const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRegisterForm(prev => ({ ...prev, [name]: value }));
-    // Clear error when user types
-    if (registerErrors[name]) {
-      setRegisterErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
   
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,38 +47,13 @@ const VolunteerLogin = () => {
     }
   };
   
-  const handleRegisterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const errors = validateForm(registerForm);
-    if (Object.keys(errors).length > 0) {
-      setRegisterErrors(errors);
-      return;
-    }
-    
-    // Registration would typically send data to a server
-    // For this demo, we just show a success message
-    toast({
-      title: "রেজিস্ট্রেশন সফল হয়েছে",
-      description: "স্বেচ্ছাসেবক হিসাবে নিবন্ধনের জন্য আপনাকে ধন্যবাদ!",
-    });
-    
-    // Reset form
-    setRegisterForm({
-      name: '',
-      phone: '',
-      address: '',
-      contribution: ''
-    });
-    
-    // Automatically log in after registration
-    setIsLoggedIn(true);
-  };
-  
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const errors = validateForm(loginForm);
+    const errors: Record<string, string> = {};
+    if (!loginForm.username) errors.username = 'ইউজারনেম আবশ্যক';
+    if (!loginForm.password) errors.password = 'পাসওয়ার্ড আবশ্যক';
+    
     if (Object.keys(errors).length > 0) {
       setLoginErrors(errors);
       return;
@@ -112,7 +68,8 @@ const VolunteerLogin = () => {
     
     // Reset form
     setLoginForm({
-      phone: '',
+      username: '',
+      password: ''
     });
     
     // Set logged in
@@ -222,111 +179,44 @@ const VolunteerLogin = () => {
   return (
     <div className="container py-6">
       <div className="max-w-md mx-auto">
-        <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="register">নিবন্ধন</TabsTrigger>
-            <TabsTrigger value="login">লগইন</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="register">
-            <Card>
-              <CardHeader>
-                <CardTitle>স্বেচ্ছাসেবক নিবন্ধন</CardTitle>
-                <CardDescription>নতুন স্বেচ্ছাসেবক হিসাবে নিবন্ধন করুন</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleRegisterSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="register-name">নাম</Label>
-                    <Input 
-                      id="register-name" 
-                      name="name"
-                      value={registerForm.name} 
-                      onChange={handleRegisterChange} 
-                      placeholder="আপনার নাম লিখুন"
-                      className={registerErrors.name ? "border-red-500" : ""}
-                    />
-                    {registerErrors.name && <p className="text-sm text-red-500">{registerErrors.name}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="register-phone">ফোন নম্বর</Label>
-                    <Input 
-                      id="register-phone" 
-                      name="phone"
-                      value={registerForm.phone} 
-                      onChange={handleRegisterChange} 
-                      placeholder="আপনার ফোন নম্বর লিখুন"
-                      className={registerErrors.phone ? "border-red-500" : ""}
-                    />
-                    {registerErrors.phone && <p className="text-sm text-red-500">{registerErrors.phone}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="register-address">ঠিকানা</Label>
-                    <Input 
-                      id="register-address" 
-                      name="address"
-                      value={registerForm.address} 
-                      onChange={handleRegisterChange} 
-                      placeholder="আপনার ঠিকানা লিখুন"
-                      className={registerErrors.address ? "border-red-500" : ""}
-                    />
-                    {registerErrors.address && <p className="text-sm text-red-500">{registerErrors.address}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="register-contribution">অবদান (টাকা)</Label>
-                    <Input 
-                      id="register-contribution" 
-                      name="contribution"
-                      type="number"
-                      value={registerForm.contribution} 
-                      onChange={handleRegisterChange} 
-                      placeholder="অবদানের পরিমাণ লিখুন"
-                      className={registerErrors.contribution ? "border-red-500" : ""}
-                    />
-                    {registerErrors.contribution && <p className="text-sm text-red-500">{registerErrors.contribution}</p>}
-                  </div>
-                  
-                  <Button type="submit" className="w-full">নিবন্ধন করুন</Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle>স্বেচ্ছাসেবক লগইন</CardTitle>
-                <CardDescription>আপনার স্বেচ্ছাসেবক অ্যাকাউন্টে লগইন করুন</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleLoginSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-phone">ফোন নম্বর</Label>
-                    <Input 
-                      id="login-phone" 
-                      name="phone"
-                      value={loginForm.phone} 
-                      onChange={handleLoginChange} 
-                      placeholder="আপনার ফোন নম্বর লিখুন"
-                      className={loginErrors.phone ? "border-red-500" : ""}
-                    />
-                    {loginErrors.phone && <p className="text-sm text-red-500">{loginErrors.phone}</p>}
-                  </div>
-                  
-                  <Button type="submit" className="w-full">লগইন</Button>
-                </form>
-              </CardContent>
-              <CardFooter className="flex justify-center">
-                <Button variant="link" onClick={() => setActiveTab('register')}>
-                  অ্যাকাউন্ট নেই? নিবন্ধন করুন
-                </Button>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <Card>
+          <CardHeader>
+            <CardTitle>স্বেচ্ছাসেবক লগইন</CardTitle>
+            <CardDescription>আপনার স্বেচ্ছাসেবক অ্যাকাউন্টে লগইন করুন</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="login-username">ইউজারনেম</Label>
+                <Input 
+                  id="login-username" 
+                  name="username"
+                  value={loginForm.username} 
+                  onChange={handleLoginChange} 
+                  placeholder="আপনার ইউজারনেম লিখুন"
+                  className={loginErrors.username ? "border-red-500" : ""}
+                />
+                {loginErrors.username && <p className="text-sm text-red-500">{loginErrors.username}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="login-password">পাসওয়ার্ড</Label>
+                <Input 
+                  id="login-password" 
+                  name="password"
+                  type="password"
+                  value={loginForm.password} 
+                  onChange={handleLoginChange} 
+                  placeholder="আপনার পাসওয়ার্ড লিখুন"
+                  className={loginErrors.password ? "border-red-500" : ""}
+                />
+                {loginErrors.password && <p className="text-sm text-red-500">{loginErrors.password}</p>}
+              </div>
+              
+              <Button type="submit" className="w-full">লগইন</Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

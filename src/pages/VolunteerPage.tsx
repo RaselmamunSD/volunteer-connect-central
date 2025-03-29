@@ -23,18 +23,18 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserCheck className="h-5 w-5 text-primary" />
-              <CardTitle>স্বেচ্ছাসেবক হিসাবে যোগদান করুন</CardTitle>
+              <CardTitle>স্বেচ্ছাসেবক লগইন করুন</CardTitle>
             </div>
             <CardDescription>
-              পূর্নমিলনী অনুষ্ঠানে আপনার অবদান রাখতে স্বেচ্ছাসেবক হিসেবে নিবন্ধন করুন
+              পূর্নমিলনী অনুষ্ঠানে স্বেচ্ছাসেবক হিসেবে আসন বুকিং করতে লগইন করুন
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="mb-4">স্বেচ্ছাসেবক হিসেবে রেজিস্ট্রেশন করতে নিচের বাটনে ক্লিক করুন</p>
+            <p className="mb-4">স্বেচ্ছাসেবক হিসেবে লগইন করতে নিচের বাটনে ক্লিক করুন</p>
           </CardContent>
           <CardFooter className="justify-center">
             <Button asChild size="lg">
-              <Link to="/volunteer/login">রেজিস্ট্রেশন করুন</Link>
+              <Link to="/volunteer/login">লগইন করুন</Link>
             </Button>
           </CardFooter>
         </Card>

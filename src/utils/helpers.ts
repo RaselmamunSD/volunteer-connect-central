@@ -18,10 +18,10 @@ export const calculateTotal = (items: { contribution?: number, amount?: number }
   }, 0);
 };
 
-// Format date for Bengali
-export const formatDate = (dateString: string): string => {
-  // Convert to Date object
-  const date = new Date(dateString);
+// Format date for Bengali (accepts string or Date object)
+export const formatDate = (date: string | Date): string => {
+  // Convert to Date object if string
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
   
   // Bengali month names
   const bengaliMonths = [
@@ -30,7 +30,7 @@ export const formatDate = (dateString: string): string => {
   ];
   
   // Format the date in Bengali style
-  return `${date.getDate()} ${bengaliMonths[date.getMonth()]}, ${date.getFullYear()}`;
+  return `${dateObj.getDate()} ${bengaliMonths[dateObj.getMonth()]}, ${dateObj.getFullYear()}`;
 };
 
 // Generate random ID

@@ -11,6 +11,7 @@ import { generateId, validateForm } from '@/utils/helpers';
 const VolunteerLogin = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('register');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   // Registration form state
   const [registerForm, setRegisterForm] = useState({
@@ -25,9 +26,18 @@ const VolunteerLogin = () => {
     phone: '',
   });
   
+  // Manual booking form state
+  const [bookingForm, setBookingForm] = useState({
+    name: '',
+    phone: '',
+    address: '',
+    amount: ''
+  });
+  
   // Form errors
   const [registerErrors, setRegisterErrors] = useState<Record<string, string>>({});
   const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
+  const [bookingErrors, setBookingErrors] = useState<Record<string, string>>({});
   
   const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -44,6 +54,15 @@ const VolunteerLogin = () => {
     // Clear error when user types
     if (loginErrors[name]) {
       setLoginErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+  
+  const handleBookingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setBookingForm(prev => ({ ...prev, [name]: value }));
+    // Clear error when user types
+    if (bookingErrors[name]) {
+      setBookingErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
   
@@ -70,6 +89,9 @@ const VolunteerLogin = () => {
       address: '',
       contribution: ''
     });
+    
+    // Automatically log in after registration
+    setIsLoggedIn(true);
   };
   
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -92,7 +114,110 @@ const VolunteerLogin = () => {
     setLoginForm({
       phone: '',
     });
+    
+    // Set logged in
+    setIsLoggedIn(true);
   };
+  
+  const handleBookingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const errors = validateForm(bookingForm);
+    if (Object.keys(errors).length > 0) {
+      setBookingErrors(errors);
+      return;
+    }
+    
+    // Booking would typically send data to a server
+    // For this demo, we just show a success message
+    toast({
+      title: "আসন বুকিং সফল হয়েছে",
+      description: "আসন বুকিং করার জন্য আপনাকে ধন্যবাদ!",
+    });
+    
+    // Reset form
+    setBookingForm({
+      name: '',
+      phone: '',
+      address: '',
+      amount: ''
+    });
+  };
+  
+  if (isLoggedIn) {
+    return (
+      <div className="container py-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>মেনুয়াল আসন বুকিং</CardTitle>
+            <CardDescription>স্বেচ্ছাসেবক হিসেবে অন্যদের জন্য আসন বুক করুন</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleBookingSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="booking-name">নাম</Label>
+                <Input 
+                  id="booking-name" 
+                  name="name"
+                  value={bookingForm.name} 
+                  onChange={handleBookingChange} 
+                  placeholder="আসন গ্রহণকারীর নাম লিখুন"
+                  className={bookingErrors.name ? "border-red-500" : ""}
+                />
+                {bookingErrors.name && <p className="text-sm text-red-500">{bookingErrors.name}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="booking-phone">ফোন নম্বর</Label>
+                <Input 
+                  id="booking-phone" 
+                  name="phone"
+                  value={bookingForm.phone} 
+                  onChange={handleBookingChange} 
+                  placeholder="আসন গ্রহণকারীর ফোন নম্বর লিখুন"
+                  className={bookingErrors.phone ? "border-red-500" : ""}
+                />
+                {bookingErrors.phone && <p className="text-sm text-red-500">{bookingErrors.phone}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="booking-address">ঠিকানা</Label>
+                <Input 
+                  id="booking-address" 
+                  name="address"
+                  value={bookingForm.address} 
+                  onChange={handleBookingChange} 
+                  placeholder="আসন গ্রহণকারীর ঠিকানা লিখুন"
+                  className={bookingErrors.address ? "border-red-500" : ""}
+                />
+                {bookingErrors.address && <p className="text-sm text-red-500">{bookingErrors.address}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="booking-amount">টাকার পরিমাণ</Label>
+                <Input 
+                  id="booking-amount" 
+                  name="amount"
+                  type="number"
+                  value={bookingForm.amount} 
+                  onChange={handleBookingChange} 
+                  placeholder="টাকার পরিমাণ লিখুন"
+                  className={bookingErrors.amount ? "border-red-500" : ""}
+                />
+                {bookingErrors.amount && <p className="text-sm text-red-500">{bookingErrors.amount}</p>}
+              </div>
+              
+              <Button type="submit" className="w-full">আসন বুক করুন</Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" onClick={() => setIsLoggedIn(false)}>লগআউট</Button>
+            <p className="text-sm text-muted-foreground">সর্বশেষ আপডেটঃ {new Date().toLocaleDateString('bn-BD')}</p>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
   
   return (
     <div className="container py-6">

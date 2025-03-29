@@ -6,10 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { volunteers, bookings } from '@/data/mockData';
 import { calculateTotal, formatCurrency } from '@/utils/helpers';
-import { CalendarDays, CreditCard, Users, Calendar } from 'lucide-react';
+import { CalendarDays, CreditCard, Users, Calendar, UserCheck, PhoneCall } from 'lucide-react';
 
 const Home = () => {
   const { toast } = useToast();
@@ -23,6 +24,11 @@ const Home = () => {
   // Filter paid and unpaid bookings
   const paidBookings = bookings.filter(booking => booking.isPaid);
   const unpaidBookings = bookings.filter(booking => !booking.isPaid);
+  
+  // Separate volunteer-made bookings from online bookings
+  // For demo, we'll assume half of the bookings are made by volunteers
+  const volunteerBookings = bookings.slice(0, Math.floor(bookings.length / 2));
+  const onlineBookings = bookings.slice(Math.floor(bookings.length / 2));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +86,7 @@ const Home = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">স্বেচ্ছাসেবক অবদান</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions)}</div>
@@ -99,12 +105,12 @@ const Home = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">আসন্ন অনুষ্ঠান</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">যোগাযোগ</CardTitle>
+            <PhoneCall className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">৩</div>
-            <p className="text-xs text-muted-foreground">সময়সূচী দেখুন</p>
+            <div className="text-2xl font-bold">০১৭৬৮৮০৭২২৬</div>
+            <p className="text-xs text-muted-foreground">প্রয়োজনে কল করুন</p>
           </CardContent>
         </Card>
       </div>
@@ -179,63 +185,109 @@ const Home = () => {
         </div>
       </div>
       
-      <div className="mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>পেমেন্ট কৃত বুকিং</CardTitle>
-            <CardDescription>সম্পন্ন পেমেন্ট সহ বুকিং সমূহ</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {paidBookings.map(booking => (
-                <Card key={booking.id} className="event-card">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">{booking.name}</CardTitle>
-                    <CardDescription>{booking.phone}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">{booking.address}</span>
-                      <Badge variant="default">পেমেন্ট সম্পন্ন</Badge>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>পেমেন্ট বাকি বুকিং</CardTitle>
-          <CardDescription>পেমেন্ট অপেক্ষমান বুকিং সমূহ</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {unpaidBookings.map(booking => (
-              <Card key={booking.id} className="event-card">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">{booking.name}</CardTitle>
-                  <CardDescription>{booking.phone}</CardDescription>
-                </CardHeader>
-                <CardContent className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">{booking.address}</span>
-                    <Badge variant="outline">অপেক্ষমান</Badge>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="all" className="mb-8">
+        <TabsList className="mb-4">
+          <TabsTrigger value="all">সমস্ত বুকিং</TabsTrigger>
+          <TabsTrigger value="volunteer">স্বেচ্ছাসেবক বুকিং</TabsTrigger>
+          <TabsTrigger value="online">অনলাইন বুকিং</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="all">
+          <Card>
+            <CardHeader>
+              <CardTitle>সমস্ত আসন বুকিং</CardTitle>
+              <CardDescription>সমস্ত বুকিংয়ের তালিকা</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {bookings.map(booking => (
+                  <Card key={booking.id} className="event-card">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{booking.name}</CardTitle>
+                      <CardDescription>{booking.phone}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">{booking.address}</span>
+                        <Badge variant={booking.isPaid ? "default" : "outline"}>
+                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="volunteer">
+          <Card>
+            <CardHeader>
+              <CardTitle>স্বেচ্ছাসেবক কর্তৃক বুকিং</CardTitle>
+              <CardDescription>স্বেচ্ছাসেবকদের দ্বারা করা বুকিংয়ের তালিকা</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {volunteerBookings.map(booking => (
+                  <Card key={booking.id} className="event-card">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{booking.name}</CardTitle>
+                      <CardDescription>{booking.phone}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">{booking.address}</span>
+                        <Badge variant={booking.isPaid ? "default" : "outline"}>
+                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="online">
+          <Card>
+            <CardHeader>
+              <CardTitle>অনলাইন বুকিং</CardTitle>
+              <CardDescription>বিকাশ পেমেন্টের মাধ্যমে করা বুকিংয়ের তালিকা</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {onlineBookings.map(booking => (
+                  <Card key={booking.id} className="event-card">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{booking.name}</CardTitle>
+                      <CardDescription>{booking.phone}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm">{booking.address}</span>
+                        <Badge variant={booking.isPaid ? "default" : "outline"}>
+                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

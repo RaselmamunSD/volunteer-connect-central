@@ -1,129 +1,176 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { volunteers, bookings, concerts, teamMembers } from '@/data/mockData';
-import { calculateTotal, formatCurrency } from '@/utils/helpers';
-import { UserCheck, CalendarDays, Music, Users, Coins } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { volunteers, bookings } from '@/data/mockData';
+import { formatCurrency } from '@/utils/helpers';
+import { useToast } from '@/hooks/use-toast';
 
 const AdminPage = () => {
-  const totalVolunteerContributions = calculateTotal(volunteers);
-  const totalBookingAmount = calculateTotal(bookings);
+  const { toast } = useToast();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Simple login check (in a real app, this would validate against a server)
+    if (username === 'admin' && password === 'admin') {
+      setIsLoggedIn(true);
+      toast({
+        title: "লগইন সফল",
+        description: "অ্যাডমিন প্যানেলে স্বাগতম!",
+      });
+    } else {
+      toast({
+        title: "লগইন ব্যর্থ",
+        description: "ইউজারনেম বা পাসওয়ার্ড ভুল!",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  if (!isLoggedIn) {
+    return (
+      <div className="container py-6">
+        <div className="max-w-md mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle>অ্যাডমিন লগইন</CardTitle>
+              <CardDescription>অ্যাডমিন প্যানেলে প্রবেশ করতে লগইন করুন</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">ইউজারনেম</Label>
+                  <Input 
+                    id="username" 
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                    placeholder="ইউজারনেম লিখুন" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">পাসওয়ার্ড</Label>
+                  <Input 
+                    id="password" 
+                    type="password"
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                    placeholder="পাসওয়ার্ড লিখুন" 
+                  />
+                </div>
+                <Button type="submit" className="w-full">লগইন</Button>
+              </form>
+            </CardContent>
+            <CardFooter className="text-center text-sm text-muted-foreground">
+              ডিফল্ট ক্রেডেনশিয়ালসঃ admin / admin
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  
+  // Total calculations
+  const totalVolunteers = volunteers.length;
+  const totalVolunteerContributions = volunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
+  const totalBookings = bookings.length;
+  const totalBookingAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
+  const paidBookings = bookings.filter(booking => booking.isPaid);
+  const unpaidBookings = bookings.filter(booking => !booking.isPaid);
   
   return (
     <div className="container py-6">
-      <div className="banner-gradient rounded-lg p-6 mb-8 text-white">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Admin Dashboard</h1>
-        <p className="text-lg md:text-xl mb-4">Manage your events, volunteers, and bookings</p>
-      </div>
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>অ্যাডমিন ড্যাশবোর্ড</CardTitle>
+          <CardDescription>সমস্ত তথ্য এবং পরিসংখ্যান এখানে দেখুন</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="py-2">
+                <CardTitle className="text-sm">মোট স্বেচ্ছাসেবক</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">{totalVolunteers}</p>
+                <p className="text-sm text-muted-foreground">মোট অবদান: {formatCurrency(totalVolunteerContributions)}</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="py-2">
+                <CardTitle className="text-sm">মোট বুকিং</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">{totalBookings}</p>
+                <p className="text-sm text-muted-foreground">মোট আয়: {formatCurrency(totalBookingAmount)}</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="py-2">
+                <CardTitle className="text-sm">পেমেন্ট কৃত</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">{paidBookings.length}</p>
+                <p className="text-sm text-muted-foreground">মোট আয়: {formatCurrency(paidBookings.reduce((sum, booking) => sum + booking.amount, 0))}</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="py-2">
+                <CardTitle className="text-sm">পেমেন্ট বাকি</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">{unpaidBookings.length}</p>
+                <p className="text-sm text-muted-foreground">বাকি আয়: {formatCurrency(unpaidBookings.reduce((sum, booking) => sum + booking.amount, 0))}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
       
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Volunteers</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{volunteers.length}</div>
-            <p className="text-xs text-muted-foreground">Registered volunteers</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Bookings</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{bookings.length}</div>
-            <p className="text-xs text-muted-foreground">Active bookings</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Concerts</CardTitle>
-            <Music className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{concerts.length}</div>
-            <p className="text-xs text-muted-foreground">Upcoming events</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <Coins className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions + totalBookingAmount)}</div>
-            <p className="text-xs text-muted-foreground">All collections</p>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Tabs defaultValue="volunteers" className="mb-8">
+      <Tabs defaultValue="volunteers">
         <TabsList className="mb-4">
-          <TabsTrigger value="volunteers">Volunteers</TabsTrigger>
-          <TabsTrigger value="bookings">Bookings</TabsTrigger>
-          <TabsTrigger value="concerts">Concerts</TabsTrigger>
-          <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsTrigger value="volunteers">স্বেচ্ছাসেবক</TabsTrigger>
+          <TabsTrigger value="bookings">বুকিং</TabsTrigger>
         </TabsList>
         
         <TabsContent value="volunteers">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Volunteer Management</CardTitle>
-                  <CardDescription>View and manage volunteer data</CardDescription>
-                </div>
-                <Button size="sm">Add Volunteer</Button>
-              </div>
+              <CardTitle>স্বেচ্ছাসেবক তালিকা</CardTitle>
+              <CardDescription>সমস্ত নিবন্ধিত স্বেচ্ছাসেবকদের তথ্য</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-muted">
-                    <tr>
-                      <th className="px-4 py-2">ID</th>
-                      <th className="px-4 py-2">Name</th>
-                      <th className="px-4 py-2">Phone</th>
-                      <th className="px-4 py-2">Address</th>
-                      <th className="px-4 py-2">Contribution</th>
-                      <th className="px-4 py-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {volunteers.map(volunteer => (
-                      <tr key={volunteer.id} className="border-b">
-                        <td className="px-4 py-3">{volunteer.id}</td>
-                        <td className="px-4 py-3">{volunteer.name}</td>
-                        <td className="px-4 py-3">{volunteer.phone}</td>
-                        <td className="px-4 py-3">{volunteer.address}</td>
-                        <td className="px-4 py-3">{formatCurrency(volunteer.contribution)}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">Edit</Button>
-                            <Button variant="destructive" size="sm">Delete</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="font-semibold">
-                      <td colSpan={4} className="px-4 py-3 text-right">Total:</td>
-                      <td className="px-4 py-3">{formatCurrency(totalVolunteerContributions)}</td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>নাম</TableHead>
+                    <TableHead>ফোন</TableHead>
+                    <TableHead>ঠিকানা</TableHead>
+                    <TableHead className="text-right">অবদান</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {volunteers.map(volunteer => (
+                    <TableRow key={volunteer.id}>
+                      <TableCell className="font-medium">{volunteer.name}</TableCell>
+                      <TableCell>{volunteer.phone}</TableCell>
+                      <TableCell>{volunteer.address}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
@@ -131,155 +178,38 @@ const AdminPage = () => {
         <TabsContent value="bookings">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Booking Management</CardTitle>
-                  <CardDescription>View and manage booking data</CardDescription>
-                </div>
-                <Button size="sm">Add Booking</Button>
-              </div>
+              <CardTitle>বুকিং তালিকা</CardTitle>
+              <CardDescription>সমস্ত বুকিংয়ের তথ্য</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-muted">
-                    <tr>
-                      <th className="px-4 py-2">ID</th>
-                      <th className="px-4 py-2">Name</th>
-                      <th className="px-4 py-2">Phone</th>
-                      <th className="px-4 py-2">Address</th>
-                      <th className="px-4 py-2">Amount</th>
-                      <th className="px-4 py-2">Date</th>
-                      <th className="px-4 py-2">Status</th>
-                      <th className="px-4 py-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookings.map(booking => (
-                      <tr key={booking.id} className="border-b">
-                        <td className="px-4 py-3">{booking.id}</td>
-                        <td className="px-4 py-3">{booking.name}</td>
-                        <td className="px-4 py-3">{booking.phone}</td>
-                        <td className="px-4 py-3">{booking.address}</td>
-                        <td className="px-4 py-3">{formatCurrency(booking.amount)}</td>
-                        <td className="px-4 py-3">{booking.date}</td>
-                        <td className="px-4 py-3">
-                          <Badge variant={booking.isPaid ? "default" : "outline"}>
-                            {booking.isPaid ? "Paid" : "Pending"}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">Edit</Button>
-                            <Button variant="destructive" size="sm">Delete</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="font-semibold">
-                      <td colSpan={4} className="px-4 py-3 text-right">Total:</td>
-                      <td className="px-4 py-3">{formatCurrency(totalBookingAmount)}</td>
-                      <td colSpan={3}></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="concerts">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Concert Management</CardTitle>
-                  <CardDescription>View and manage concert data</CardDescription>
-                </div>
-                <Button size="sm">Add Concert</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-muted">
-                    <tr>
-                      <th className="px-4 py-2">ID</th>
-                      <th className="px-4 py-2">Title</th>
-                      <th className="px-4 py-2">Date</th>
-                      <th className="px-4 py-2">Venue</th>
-                      <th className="px-4 py-2">Price</th>
-                      <th className="px-4 py-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {concerts.map(concert => (
-                      <tr key={concert.id} className="border-b">
-                        <td className="px-4 py-3">{concert.id}</td>
-                        <td className="px-4 py-3">{concert.title}</td>
-                        <td className="px-4 py-3">{concert.date}</td>
-                        <td className="px-4 py-3">{concert.venue}</td>
-                        <td className="px-4 py-3">{formatCurrency(concert.price)}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">Edit</Button>
-                            <Button variant="destructive" size="sm">Delete</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="team">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Team Management</CardTitle>
-                  <CardDescription>View and manage team members</CardDescription>
-                </div>
-                <Button size="sm">Add Team Member</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-xs uppercase bg-muted">
-                    <tr>
-                      <th className="px-4 py-2">ID</th>
-                      <th className="px-4 py-2">Name</th>
-                      <th className="px-4 py-2">Title</th>
-                      <th className="px-4 py-2">Phone</th>
-                      <th className="px-4 py-2">Address</th>
-                      <th className="px-4 py-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {teamMembers.map(member => (
-                      <tr key={member.id} className="border-b">
-                        <td className="px-4 py-3">{member.id}</td>
-                        <td className="px-4 py-3">{member.name}</td>
-                        <td className="px-4 py-3">{member.title}</td>
-                        <td className="px-4 py-3">{member.phone}</td>
-                        <td className="px-4 py-3">{member.address}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">Edit</Button>
-                            <Button variant="destructive" size="sm">Delete</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>নাম</TableHead>
+                    <TableHead>ফোন</TableHead>
+                    <TableHead>ঠিকানা</TableHead>
+                    <TableHead>পরিমাণ</TableHead>
+                    <TableHead>স্ট্যাটাস</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {bookings.map(booking => (
+                    <TableRow key={booking.id}>
+                      <TableCell className="font-medium">{booking.name}</TableCell>
+                      <TableCell>{booking.phone}</TableCell>
+                      <TableCell>{booking.address}</TableCell>
+                      <TableCell>{formatCurrency(booking.amount)}</TableCell>
+                      <TableCell>
+                        {booking.isPaid ? (
+                          <Badge>পেমেন্ট সম্পন্ন</Badge>
+                        ) : (
+                          <Badge variant="outline">পেমেন্ট বাকি</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>

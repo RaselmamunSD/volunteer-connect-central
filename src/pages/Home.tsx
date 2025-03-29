@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { volunteers, bookings } from '@/data/mockData';
 import { calculateTotal, formatCurrency } from '@/utils/helpers';
-import { CalendarDays, CreditCard, Users, Calendar, UserCheck, PhoneCall } from 'lucide-react';
+import { CalendarDays, CreditCard, Users, Calendar, UserCheck, PhoneCall, Bell, BarChart4 } from 'lucide-react';
 
 const Home = () => {
   const { toast } = useToast();
@@ -69,6 +69,18 @@ const Home = () => {
           <Button asChild variant="outline">
             <Link to="/concert">অনুষ্ঠান দেখুন</Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link to="/notice">
+              <Bell className="mr-2 h-4 w-4" />
+              নোটিশ
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/finance">
+              <BarChart4 className="mr-2 h-4 w-4" />
+              আয় বেয় খরচ
+            </Link>
+          </Button>
         </div>
       </div>
       
@@ -85,12 +97,12 @@ const Home = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">স্বেচ্ছাসেবক অবদান</CardTitle>
+            <CardTitle className="text-sm font-medium">ডোনেশন তথ্য</CardTitle>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions)}</div>
-            <p className="text-xs text-muted-foreground">{volunteers.length} জন স্বেচ্ছাসেবক</p>
+            <p className="text-xs text-muted-foreground">{volunteers.length} জন দাতা</p>
           </CardContent>
         </Card>
         <Card>
@@ -119,8 +131,8 @@ const Home = () => {
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>স্বেচ্ছাসেবক অবদান</CardTitle>
-              <CardDescription>সাম্প্রতিক স্বেচ্ছাসেবক অবদানের সারসংক্ষেপ</CardDescription>
+              <CardTitle>ডোনেশন তথ্য</CardTitle>
+              <CardDescription>সাম্প্রতিক দাতাদের অবদানের সারসংক্ষেপ</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -135,11 +147,6 @@ const Home = () => {
                 ))}
               </div>
             </CardContent>
-            <CardFooter>
-              <Button asChild variant="outline" size="sm">
-                <Link to="/volunteer">সকল স্বেচ্ছাসেবক দেখুন</Link>
-              </Button>
-            </CardFooter>
           </Card>
         </div>
         

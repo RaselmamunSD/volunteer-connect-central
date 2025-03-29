@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, MusicIcon, UserCog, UserCheck } from 'lucide-react';
+import { Home, Users, MusicIcon, UserCog, UserCheck, Bell, BarChart4 } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -35,6 +35,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       name: 'অনুষ্ঠান', 
       path: '/concert', 
       icon: <MusicIcon className="mr-2 h-4 w-4" /> 
+    },
+    { 
+      name: 'নোটিশ', 
+      path: '/notice', 
+      icon: <Bell className="mr-2 h-4 w-4" /> 
+    },
+    { 
+      name: 'আয় বেয় খরচ', 
+      path: '/finance', 
+      icon: <BarChart4 className="mr-2 h-4 w-4" /> 
     },
     { 
       name: 'অ্যাডমিন', 

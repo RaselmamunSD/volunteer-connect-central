@@ -15,6 +15,8 @@ import AdminPage from "./pages/AdminPage";
 import AdminLogin from "./pages/AdminLogin";
 import VolunteerLogin from "./pages/VolunteerLogin";
 import NotFound from "./pages/NotFound";
+import NoticePage from "./pages/NoticePage";
+import FinancePage from "./pages/FinancePage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/concert" element={<Layout><ConcertPage /></Layout>} />
           <Route path="/admin" element={<Layout><AdminPage /></Layout>} />
           <Route path="/admin/login" element={<Layout><AdminLogin /></Layout>} />
+          <Route path="/notice" element={<Layout><NoticePage /></Layout>} />
+          <Route path="/finance" element={<Layout><FinancePage /></Layout>} />
           <Route path="*" element={<Layout><NotFound /></Layout>} />
         </Routes>
       </BrowserRouter>

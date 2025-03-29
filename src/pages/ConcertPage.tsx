@@ -36,7 +36,7 @@ const ConcertPage = () => {
               </div>
               <CardTitle>{concert.title}</CardTitle>
               <div className="flex items-center justify-between">
-                <Badge>{formatCurrency(concert.price)}</Badge>
+                <Badge>{concert.price > 0 ? formatCurrency(concert.price) : 'ফ্রি'}</Badge>
               </div>
             </CardHeader>
             <CardContent>
@@ -53,7 +53,9 @@ const ConcertPage = () => {
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full">
-                <Link to="/">রেজিস্ট্রেশন করুন</Link>
+                <Link to={concert.price > 0 ? "/" : "#"}>
+                  {concert.price > 0 ? "রেজিস্ট্রেশন করুন" : "অংশগ্রহণ করুন"}
+                </Link>
               </Button>
             </CardFooter>
           </Card>
@@ -89,7 +91,7 @@ const ConcertPage = () => {
         </CardContent>
         <CardFooter className="justify-center">
           <Button asChild variant="outline">
-            <Link to="/volunteer">স্বেচ্ছাসেবক হিসেবে যোগদান করুন</Link>
+            <Link to="/volunteer/login">স্বেচ্ছাসেবক হিসেবে যোগদান করুন</Link>
           </Button>
         </CardFooter>
       </Card>

@@ -19,22 +19,26 @@ const Home = () => {
 
   const totalVolunteerContributions = calculateTotal(volunteers);
   const totalBookingAmount = calculateTotal(bookings);
+  
+  // Filter paid and unpaid bookings
+  const paidBookings = bookings.filter(booking => booking.isPaid);
+  const unpaidBookings = bookings.filter(booking => !booking.isPaid);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name || !phone || !address) {
       toast({
-        title: "Error",
-        description: "Please fill in all fields",
+        title: "ত্রুটি",
+        description: "অনুগ্রহ করে সমস্ত তথ্য পূরণ করুন",
         variant: "destructive",
       });
       return;
     }
     
     toast({
-      title: "Success",
-      description: "Redirecting to payment page...",
+      title: "সফল",
+      description: "বিকাশ পেমেন্ট পেজে রিডাইরেক্ট করা হচ্ছে...",
     });
     
     // Reset form
@@ -46,14 +50,18 @@ const Home = () => {
   return (
     <div className="container py-6">
       <div className="banner-gradient rounded-lg p-6 mb-8 text-white">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome to EventConnect</h1>
-        <p className="text-lg md:text-xl mb-4">Manage your events with ease and connect with volunteers</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">পূর্নমিলনী-২০২৬</h1>
+        <p className="text-lg md:text-xl mb-4">"এসো মিলি একত্রে স্মৃতির বন্ধনে ভ্রাতৃত্বের বন্ধনে"</p>
+        <p className="mb-4">
+          <span className="font-semibold">স্থান:</span> হাড়ীভাঙ্গা তা'লিমুল ইনসান হাফিজিয়া ক্বওমী মাদ্রাসা <br />
+          <span className="font-semibold">তারিখ:</span> ঈদুল আযহার তৃতীয় দিন
+        </p>
         <div className="flex flex-wrap gap-4">
           <Button asChild variant="secondary">
-            <Link to="/volunteer">Become a Volunteer</Link>
+            <Link to="/volunteer/login">স্বেচ্ছাসেবক হিসাবে যোগদান করুন</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/concert">View Concerts</Link>
+            <Link to="/concert">অনুষ্ঠান দেখুন</Link>
           </Button>
         </div>
       </div>
@@ -61,42 +69,42 @@ const Home = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Total Collections</CardTitle>
+            <CardTitle className="text-sm font-medium">মোট সংগ্রহ</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions + totalBookingAmount)}</div>
-            <p className="text-xs text-muted-foreground">+20% from last month</p>
+            <p className="text-xs text-muted-foreground">গত মাসের তুলনায় +২০%</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Volunteer Donations</CardTitle>
+            <CardTitle className="text-sm font-medium">স্বেচ্ছাসেবক অবদান</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions)}</div>
-            <p className="text-xs text-muted-foreground">{volunteers.length} volunteers</p>
+            <p className="text-xs text-muted-foreground">{volunteers.length} জন স্বেচ্ছাসেবক</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Booking Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">বুকিং আয়</CardTitle>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalBookingAmount)}</div>
-            <p className="text-xs text-muted-foreground">{bookings.length} bookings</p>
+            <p className="text-xs text-muted-foreground">{bookings.length} বুকিং</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
+            <CardTitle className="text-sm font-medium">আসন্ন অনুষ্ঠান</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">View schedule</p>
+            <div className="text-2xl font-bold">৩</div>
+            <p className="text-xs text-muted-foreground">সময়সূচী দেখুন</p>
           </CardContent>
         </Card>
       </div>
@@ -105,8 +113,8 @@ const Home = () => {
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Donations</CardTitle>
-              <CardDescription>Overview of recent volunteer contributions</CardDescription>
+              <CardTitle>স্বেচ্ছাসেবক অবদান</CardTitle>
+              <CardDescription>সাম্প্রতিক স্বেচ্ছাসেবক অবদানের সারসংক্ষেপ</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -123,7 +131,7 @@ const Home = () => {
             </CardContent>
             <CardFooter>
               <Button asChild variant="outline" size="sm">
-                <Link to="/volunteer">View All Volunteers</Link>
+                <Link to="/volunteer">সকল স্বেচ্ছাসেবক দেখুন</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -132,53 +140,83 @@ const Home = () => {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>Book Your Seat</CardTitle>
-              <CardDescription>Reserve your spot for our upcoming events</CardDescription>
+              <CardTitle>আসন বুক করুন</CardTitle>
+              <CardDescription>আসন্ন অনুষ্ঠানের জন্য আপনার আসন সংরক্ষণ করুন</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">নাম</Label>
                   <Input 
                     id="name" 
                     value={name} 
                     onChange={(e) => setName(e.target.value)} 
-                    placeholder="Enter your name" 
+                    placeholder="আপনার নাম লিখুন" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">ফোন নম্বর</Label>
                   <Input 
                     id="phone" 
                     value={phone} 
                     onChange={(e) => setPhone(e.target.value)} 
-                    placeholder="Enter your phone number" 
+                    placeholder="আপনার ফোন নম্বর লিখুন" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address">ঠিকানা</Label>
                   <Input 
                     id="address" 
                     value={address} 
                     onChange={(e) => setAddress(e.target.value)} 
-                    placeholder="Enter your address" 
+                    placeholder="আপনার ঠিকানা লিখুন" 
                   />
                 </div>
-                <Button type="submit" className="w-full">Submit to bKash Payment</Button>
+                <Button type="submit" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
               </form>
             </CardContent>
           </Card>
         </div>
       </div>
       
+      <div className="mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>পেমেন্ট কৃত বুকিং</CardTitle>
+            <CardDescription>সম্পন্ন পেমেন্ট সহ বুকিং সমূহ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {paidBookings.map(booking => (
+                <Card key={booking.id} className="event-card">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">{booking.name}</CardTitle>
+                    <CardDescription>{booking.phone}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pb-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">{booking.address}</span>
+                      <Badge variant="default">পেমেন্ট সম্পন্ন</Badge>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
       <Card>
         <CardHeader>
-          <CardTitle>Recent Bookings</CardTitle>
-          <CardDescription>Latest seat bookings</CardDescription>
+          <CardTitle>পেমেন্ট বাকি বুকিং</CardTitle>
+          <CardDescription>পেমেন্ট অপেক্ষমান বুকিং সমূহ</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {bookings.map(booking => (
+            {unpaidBookings.map(booking => (
               <Card key={booking.id} className="event-card">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">{booking.name}</CardTitle>
@@ -187,9 +225,7 @@ const Home = () => {
                 <CardContent className="pb-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">{booking.address}</span>
-                    <Badge variant={booking.isPaid ? "default" : "outline"}>
-                      {booking.isPaid ? "Paid" : "Pending"}
-                    </Badge>
+                    <Badge variant="outline">অপেক্ষমান</Badge>
                   </div>
                 </CardContent>
                 <CardFooter>

@@ -46,7 +46,7 @@ export const concerts = [
     title: 'সাংস্কৃতিক সন্ধ্যা',
     date: '2026-06-21',
     venue: 'মাদ্রাসা প্রাঙ্গণ, হাড়ীভাঙ্গা',
-    price: 300,
+    price: 0,
     image: '/placeholder.svg',
   },
   {
@@ -54,7 +54,7 @@ export const concerts = [
     title: 'স্মৃতিচারণ অনুষ্ঠান',
     date: '2026-06-22',
     venue: 'মাদ্রাসা প্রাঙ্গণ, হাড়ীভাঙ্গা',
-    price: 200,
+    price: 0,
     image: '/placeholder.svg',
   },
 ];
@@ -95,3 +95,30 @@ export const teamMembers = [
   },
 ];
 
+// Mock data for bookings
+export const bookings = [
+  {
+    id: 1,
+    name: 'আরিফ হোসেন',
+    phone: '০১৭১২৩৪৫৬৭৮',
+    address: 'হাড়ীভাঙ্গা, লালমনিরহাট',
+    amount: 500,
+    isPaid: true,
+  },
+  {
+    id: 2,
+    name: 'রহমান আলী',
+    phone: '০১৮১২৩৪৫৬৭৮',
+    address: 'লালমনিরহাট সদর',
+    amount: 500,
+    isPaid: true,
+  },
+  {
+    id: 3,
+    name: 'আব্দুল্লাহ',
+    phone: '০১৯১২৩৪৫৬৭৮',
+    address: 'হাড়ীভাঙ্গা, লালমনিরহাট',
+    amount: 500,
+    isPaid: false,
+  },
+];

@@ -19,7 +19,7 @@
     --primary: 0 91% 45%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 70% 30%;
+    --secondary: 240 70% 50%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 210 40% 96.1%;
@@ -60,7 +60,7 @@
     --primary: 0 91% 45%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 70% 30%;
+    --secondary: 240 70% 50%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
@@ -95,6 +95,13 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Noto Sans Bengali', sans-serif;
+  }
+}
+
+/* Custom button styles for better visibility */
+@layer components {
+  .nav-button-highlight {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-medium;
   }
 }
 
@@ -143,6 +150,17 @@
   
   p {
     font-size: 0.875rem !important;
+  }
+}
+
+/* Additional responsive improvements */
+@media (max-width: 480px) {
+  .mobile-nav-container {
+    padding: 0 0.5rem;
+  }
+  
+  .mobile-nav-button {
+    padding: 0.25rem !important;
   }
 }
 

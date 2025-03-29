@@ -47,9 +47,9 @@ const TeamPage = () => {
 
   return (
     <div className="container py-6">
-      <div className="bg-gradient-event rounded-lg p-6 mb-8 text-white">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">আয়োজক কমিটি</h1>
-        <p className="text-lg md:text-xl mb-4">হাড়ীভাঙ্গা তা'লিমুল ইনসান হাফিজিয়া ক্বওমী মাদ্রাসার আয়োজক কমিটি</p>
+      <div className="bg-gradient-event rounded-lg p-4 md:p-6 mb-6 md:mb-8 text-white">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">আয়োজক কমিটি</h1>
+        <p className="text-base md:text-lg lg:text-xl mb-4">হাড়ীভাঙ্গা তা'লিমুল ইনসান হাফিজিয়া ক্বওমী মাদ্রাসার আয়োজক কমিটি</p>
         
         <div className="relative max-w-md mt-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70 h-4 w-4" />
@@ -64,8 +64,8 @@ const TeamPage = () => {
       </div>
       
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">পদাধিকারীবৃন্দ</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4">পদাধিকারীবৃন্দ</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
           {leadershipTitles.map(title => 
             groupedByTitle[title]?.map(member => (
               <MemberCard key={member.id} member={member} isLeadership={true} />
@@ -77,9 +77,9 @@ const TeamPage = () => {
       {sortedTitles
         .filter(title => !leadershipTitles.includes(title))
         .map(title => (
-          <div key={title} className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">{title}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div key={title} className="mb-6 md:mb-8">
+            <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">{title}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
               {groupedByTitle[title].map(member => (
                 <MemberCard key={member.id} member={member} isLeadership={false} />
               ))}
@@ -99,29 +99,29 @@ interface MemberCardProps {
 const MemberCard = ({ member, isLeadership }: MemberCardProps) => {
   return (
     <Card className={`hover:shadow-lg transition-all duration-300 ${isLeadership ? 'border-primary/50 bg-primary/5' : 'hover:border-primary/30'}`}>
-      <CardHeader className="pb-2">
-        <div className="flex items-start gap-4">
-          <Avatar className={`w-16 h-16 rounded-full ring-2 ${isLeadership ? 'ring-primary' : 'ring-muted'}`}>
+      <CardHeader className="pb-2 p-3 md:p-4">
+        <div className="flex items-start gap-3 md:gap-4">
+          <Avatar className={`w-14 h-14 md:w-16 md:h-16 rounded-full ring-2 ${isLeadership ? 'ring-primary' : 'ring-muted'}`}>
             <AvatarImage src={member.image} alt={member.name} className="object-cover" />
             <AvatarFallback className="bg-muted">
               <UserSquare className="h-8 w-8" />
             </AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-lg">{member.name}</CardTitle>
-            <Badge variant={isLeadership ? "default" : "outline"} className="mt-1">
+            <CardTitle className="text-base md:text-lg">{member.name}</CardTitle>
+            <Badge variant={isLeadership ? "default" : "outline"} className="mt-1 text-xs">
               {member.title}
             </Badge>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-2 pb-4 space-y-2">
-        <div className="flex items-center gap-2 text-sm">
-          <Phone className="h-4 w-4 text-primary" />
-          <span>{member.phone}</span>
+      <CardContent className="pt-1 pb-3 md:pt-2 md:pb-4 px-3 md:px-4 space-y-1 md:space-y-2">
+        <div className="flex items-center gap-2 text-xs md:text-sm">
+          <Phone className="h-3 w-3 md:h-4 md:w-4 text-primary flex-shrink-0" />
+          <span className="break-all">{member.phone}</span>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <MapPin className="h-4 w-4 text-primary" />
+        <div className="flex items-center gap-2 text-xs md:text-sm">
+          <MapPin className="h-3 w-3 md:h-4 md:w-4 text-primary flex-shrink-0" />
           <span>{member.address}</span>
         </div>
       </CardContent>

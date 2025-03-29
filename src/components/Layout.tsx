@@ -34,17 +34,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { 
       name: 'অনুষ্ঠান', 
       path: '/concert', 
-      icon: <MusicIcon className="mr-2 h-4 w-4" /> 
+      icon: <MusicIcon className="mr-2 h-4 w-4" />,
+      highlight: true
     },
     { 
       name: 'নোটিশ', 
       path: '/notice', 
-      icon: <Bell className="mr-2 h-4 w-4" /> 
+      icon: <Bell className="mr-2 h-4 w-4" />,
+      highlight: true
     },
     { 
       name: 'আয় বেয় খরচ', 
       path: '/finance', 
-      icon: <BarChart4 className="mr-2 h-4 w-4" /> 
+      icon: <BarChart4 className="mr-2 h-4 w-4" />,
+      highlight: true
     },
     { 
       name: 'অ্যাডমিন', 
@@ -68,13 +71,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {navItems.map((item) => (
                 <Button
                   key={item.path}
-                  variant={location.pathname === item.path ? "default" : "ghost"}
+                  variant={location.pathname === item.path ? "default" : item.highlight ? "secondary" : "ghost"}
                   asChild
                   className={cn(
                     "text-sm font-medium transition-colors",
                     location.pathname === item.path 
                       ? "text-primary-foreground" 
-                      : "text-foreground/60 hover:text-foreground"
+                      : item.highlight
+                        ? "text-secondary-foreground hover:bg-secondary/90"
+                        : "text-foreground/60 hover:text-foreground"
                   )}
                 >
                   <Link to={item.path} className="flex items-center">
@@ -95,14 +100,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {navItems.map((item) => (
               <Button
                 key={item.path}
-                variant={location.pathname === item.path ? "default" : "ghost"}
+                variant={location.pathname === item.path 
+                  ? "default" 
+                  : item.highlight 
+                    ? "secondary" 
+                    : "ghost"
+                }
                 asChild
                 size="sm"
                 className={cn(
                   "px-1",
                   location.pathname === item.path 
                     ? "text-primary-foreground" 
-                    : "text-foreground/60 hover:text-foreground"
+                    : item.highlight
+                      ? "text-secondary-foreground"
+                      : "text-foreground/60 hover:text-foreground"
                 )}
               >
                 <Link to={item.path} className="flex flex-col items-center text-xs">

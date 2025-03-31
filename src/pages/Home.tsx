@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,16 +12,60 @@ import { volunteers, bookings } from '@/data/mockData';
 import { calculateTotal, formatCurrency } from '@/utils/helpers';
 import { CalendarDays, CreditCard, Users, Calendar, UserCheck, PhoneCall, Bell, BarChart4 } from 'lucide-react';
 
+// Initial financial data
+const initialIncomeData = [
+  { id: 1, name: 'অনুষ্ঠান টিকেট বিক্রয়', value: 250000 },
+  { id: 2, name: 'ডোনেশন', value: 180000 },
+  { id: 3, name: 'স্পন্সরশিপ', value: 120000 },
+  { id: 4, name: 'অন্যান্য', value: 50000 },
+];
+
+const initialExpenseData = [
+  { id: 1, name: 'ভেন্যু খরচ', value: 100000 },
+  { id: 2, name: 'খাবার', value: 150000 },
+  { id: 3, name: 'সাউন্ড সিস্টেম', value: 80000 },
+  { id: 4, name: 'ডেকোরেশন', value: 70000 },
+  { id: 5, name: 'প্রিন্টিং', value: 40000 },
+  { id: 6, name: 'অন্যান্য খরচ', value: 60000 },
+];
+
 const Home = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [localVolunteers, setLocalVolunteers] = useState(volunteers);
   const [localBookings, setLocalBookings] = useState([]);
+  const [incomeData, setIncomeData] = useState(initialIncomeData);
+  const [expenseData, setExpenseData] = useState(initialExpenseData);
 
-  const totalVolunteerContributions = calculateTotal(volunteers);
-  const totalBookingAmount = calculateTotal(bookings);
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
+      const savedBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
+      const savedIncomeData = JSON.parse(localStorage.getItem('incomeData') || JSON.stringify(initialIncomeData));
+      const savedExpenseData = JSON.parse(localStorage.getItem('expenseData') || JSON.stringify(initialExpenseData));
+      
+      setLocalVolunteers(savedVolunteers);
+      setLocalBookings(savedBookings);
+      setIncomeData(savedIncomeData);
+      setExpenseData(savedExpenseData);
+    } catch (err) {
+      console.error('Error loading data from localStorage:', err);
+      // Fallback to initial data if there's an error
+      setLocalVolunteers(volunteers);
+      setLocalBookings([]);
+      setIncomeData(initialIncomeData);
+      setExpenseData(initialExpenseData);
+    }
+  }, []);
+
+  const totalVolunteerContributions = localVolunteers.reduce((sum, volunteer) => sum + (volunteer.contribution || 0), 0);
+  const totalBookingAmount = bookings.reduce((sum, booking) => sum + (booking.amount || 0), 0);
+  const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0);
+  const totalExpense = expenseData.reduce((sum, item) => sum + item.value, 0);
   
   // Filter paid and unpaid bookings
   const paidBookings = bookings.filter(booking => booking.isPaid);
@@ -30,16 +75,6 @@ const Home = () => {
   // For demo, we'll assume half of the bookings are offline
   const offlineBookings = bookings.slice(0, Math.floor(bookings.length / 2));
   const onlineBookings = [...bookings.slice(Math.floor(bookings.length / 2)), ...localBookings];
-
-  // Load online bookings from localStorage on component mount
-  useEffect(() => {
-    try {
-      const savedOnlineBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
-      setLocalBookings(savedOnlineBookings);
-    } catch (err) {
-      console.error('Error loading online bookings:', err);
-    }
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,8 +138,10 @@ const Home = () => {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions + totalBookingAmount)}</div>
-            <p className="text-xs text-muted-foreground">গত মাসের তুলনায় +২০%</p>
+            <div className="text-2xl font-bold">{formatCurrency(totalIncome - totalExpense)}</div>
+            <p className="text-xs text-muted-foreground">
+              মোট আয়: {formatCurrency(totalIncome)}, মোট ব্যয়: {formatCurrency(totalExpense)}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -114,7 +151,7 @@ const Home = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions)}</div>
-            <p className="text-xs text-muted-foreground">{volunteers.length} জন দাতা</p>
+            <p className="text-xs text-muted-foreground">{localVolunteers.length} জন দাতা</p>
           </CardContent>
         </Card>
         <Card>
@@ -150,7 +187,7 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {volunteers.map(volunteer => (
+                {localVolunteers.slice(0, 10).map(volunteer => (
                   <div key={volunteer.id} className="flex items-center justify-between border-b pb-2">
                     <div>
                       <p className="font-medium">{volunteer.name}</p>

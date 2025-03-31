@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFoo
 import { volunteers } from '@/data/mockData';
 import { formatCurrency } from '@/utils/helpers';
 import { useToast } from '@/hooks/use-toast';
+
+// Initial financial data
+const initialIncomeData = [
+  { id: 1, name: 'অনুষ্ঠান টিকেট বিক্রয়', value: 250000 },
+  { id: 2, name: 'ডোনেশন', value: 180000 },
+  { id: 3, name: 'স্পন্সরশিপ', value: 120000 },
+  { id: 4, name: 'অন্যান্য', value: 50000 },
+];
+
+const initialExpenseData = [
+  { id: 1, name: 'ভেন্যু খরচ', value: 100000 },
+  { id: 2, name: 'খাবার', value: 150000 },
+  { id: 3, name: 'সাউন্ড সিস্টেম', value: 80000 },
+  { id: 4, name: 'ডেকোরেশন', value: 70000 },
+  { id: 5, name: 'প্রিন্টিং', value: 40000 },
+  { id: 6, name: 'অন্যান্য খরচ', value: 60000 },
+];
 
 const AdminPage = () => {
   const { toast } = useToast();
@@ -28,6 +45,30 @@ const AdminPage = () => {
     phone: '',
     contribution: '',
   });
+
+  // For tracking volunteers and financial data
+  const [localVolunteers, setLocalVolunteers] = useState(volunteers);
+  const [incomeData, setIncomeData] = useState(initialIncomeData);
+  const [expenseData, setExpenseData] = useState(initialExpenseData);
+  
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
+      const savedIncomeData = JSON.parse(localStorage.getItem('incomeData') || JSON.stringify(initialIncomeData));
+      const savedExpenseData = JSON.parse(localStorage.getItem('expenseData') || JSON.stringify(initialExpenseData));
+      
+      setLocalVolunteers(savedVolunteers);
+      setIncomeData(savedIncomeData);
+      setExpenseData(savedExpenseData);
+    } catch (err) {
+      console.error('Error loading data from localStorage:', err);
+      // Fallback to initial data if there's an error
+      setLocalVolunteers(volunteers);
+      setIncomeData(initialIncomeData);
+      setExpenseData(initialExpenseData);
+    }
+  }, []);
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,10 +111,41 @@ const AdminPage = () => {
       return;
     }
     
-    toast({
-      title: "সফল",
-      description: donationForm.type === 'donation' ? "আয় তথ্য সংরক্ষণ করা হয়েছে" : "ব্যয় তথ্য সংরক্ষণ করা হয়েছে",
-    });
+    const amount = parseFloat(donationForm.amount);
+    
+    if (donationForm.type === 'donation') {
+      // Add new income data
+      const newIncomeItem = {
+        id: Date.now(),
+        name: donationForm.name,
+        value: amount
+      };
+      
+      const updatedIncomeData = [...incomeData, newIncomeItem];
+      setIncomeData(updatedIncomeData);
+      localStorage.setItem('incomeData', JSON.stringify(updatedIncomeData));
+      
+      toast({
+        title: "সফল",
+        description: "আয় তথ্য সংরক্ষণ করা হয়েছে",
+      });
+    } else {
+      // Add new expense data
+      const newExpenseItem = {
+        id: Date.now(),
+        name: donationForm.name,
+        value: amount
+      };
+      
+      const updatedExpenseData = [...expenseData, newExpenseItem];
+      setExpenseData(updatedExpenseData);
+      localStorage.setItem('expenseData', JSON.stringify(updatedExpenseData));
+      
+      toast({
+        title: "সফল",
+        description: "ব্যয় তথ্য সংরক্ষণ করা হয়েছে",
+      });
+    }
     
     // Reset form
     setDonationForm({
@@ -95,6 +167,19 @@ const AdminPage = () => {
       return;
     }
     
+    // Add new volunteer donation
+    const newVolunteer = {
+      id: Date.now(),
+      name: volunteerForm.name,
+      phone: volunteerForm.phone || 'N/A',
+      contribution: parseFloat(volunteerForm.contribution),
+      joinDate: new Date().toISOString().split('T')[0]
+    };
+    
+    const updatedVolunteers = [...localVolunteers, newVolunteer];
+    setLocalVolunteers(updatedVolunteers);
+    localStorage.setItem('volunteers', JSON.stringify(updatedVolunteers));
+    
     toast({
       title: "সফল",
       description: "ডোনেশন তথ্য সংরক্ষণ করা হয়েছে",
@@ -107,6 +192,9 @@ const AdminPage = () => {
       contribution: ''
     });
   };
+  
+  // Calculate total volunteer contributions
+  const totalVolunteerContributions = localVolunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
   
   if (!isLoggedIn) {
     return (
@@ -149,10 +237,6 @@ const AdminPage = () => {
       </div>
     );
   }
-  
-  // Total calculations for financial data
-  const totalVolunteers = volunteers.length;
-  const totalVolunteerContributions = volunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
   
   return (
     <div className="container py-6">
@@ -291,7 +375,7 @@ const AdminPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {volunteers.map(volunteer => (
+              {localVolunteers.map(volunteer => (
                 <TableRow key={volunteer.id}>
                   <TableCell className="font-medium">{volunteer.name}</TableCell>
                   <TableCell>{volunteer.phone}</TableCell>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ResponsiveContainer, PieChart, Pie, Cell, 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -18,21 +18,21 @@ import {
   ListIcon 
 } from 'lucide-react';
 
-// Sample financial data
-const incomeData = [
-  { name: 'অনুষ্ঠান টিকেট বিক্রয়', value: 250000 },
-  { name: 'ডোনেশন', value: 180000 },
-  { name: 'স্পন্সরশিপ', value: 120000 },
-  { name: 'অন্যান্য', value: 50000 },
+// Initial financial data
+const initialIncomeData = [
+  { id: 1, name: 'অনুষ্ঠান টিকেট বিক্রয়', value: 250000 },
+  { id: 2, name: 'ডোনেশন', value: 180000 },
+  { id: 3, name: 'স্পন্সরশিপ', value: 120000 },
+  { id: 4, name: 'অন্যান্য', value: 50000 },
 ];
 
-const expenseData = [
-  { name: 'ভেন্যু খরচ', value: 100000 },
-  { name: 'খাবার', value: 150000 },
-  { name: 'সাউন্ড সিস্টেম', value: 80000 },
-  { name: 'ডেকোরেশন', value: 70000 },
-  { name: 'প্রিন্টিং', value: 40000 },
-  { name: 'অন্যান্য খরচ', value: 60000 },
+const initialExpenseData = [
+  { id: 1, name: 'ভেন্যু খরচ', value: 100000 },
+  { id: 2, name: 'খাবার', value: 150000 },
+  { id: 3, name: 'সাউন্ড সিস্টেম', value: 80000 },
+  { id: 4, name: 'ডেকোরেশন', value: 70000 },
+  { id: 5, name: 'প্রিন্টিং', value: 40000 },
+  { id: 6, name: 'অন্যান্য খরচ', value: 60000 },
 ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#4CAF50'];
@@ -55,12 +55,31 @@ const CustomTooltip = ({
   return null;
 };
 
-const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0);
-const totalExpense = expenseData.reduce((sum, item) => sum + item.value, 0);
-const balance = totalIncome - totalExpense;
-
 const FinancePage = () => {
-  const totalVolunteerContribution = volunteers.reduce(
+  const [incomeData, setIncomeData] = useState(initialIncomeData);
+  const [expenseData, setExpenseData] = useState(initialExpenseData);
+  const [localVolunteers, setLocalVolunteers] = useState(volunteers);
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
+      const savedIncomeData = JSON.parse(localStorage.getItem('incomeData') || JSON.stringify(initialIncomeData));
+      const savedExpenseData = JSON.parse(localStorage.getItem('expenseData') || JSON.stringify(initialExpenseData));
+      
+      setLocalVolunteers(savedVolunteers);
+      setIncomeData(savedIncomeData);
+      setExpenseData(savedExpenseData);
+    } catch (err) {
+      console.error('Error loading data from localStorage:', err);
+      // Fallback to initial data if there's an error
+      setLocalVolunteers(volunteers);
+      setIncomeData(initialIncomeData);
+      setExpenseData(initialExpenseData);
+    }
+  }, []);
+
+  const totalVolunteerContribution = localVolunteers.reduce(
     (sum, volunteer) => sum + (volunteer.contribution || 0), 
     0
   );
@@ -69,6 +88,10 @@ const FinancePage = () => {
     (sum, booking) => sum + (booking.amount || 0), 
     0
   );
+
+  const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0);
+  const totalExpense = expenseData.reduce((sum, item) => sum + item.value, 0);
+  const balance = totalIncome - totalExpense;
 
   return (
     <div className="container py-6">
@@ -200,7 +223,7 @@ const FinancePage = () => {
               </TableHeader>
               <TableBody>
                 {incomeData.map((item) => (
-                  <TableRow key={item.name}>
+                  <TableRow key={item.id}>
                     <TableCell>{item.name}</TableCell>
                     <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
                   </TableRow>
@@ -230,7 +253,7 @@ const FinancePage = () => {
               </TableHeader>
               <TableBody>
                 {expenseData.map((item) => (
-                  <TableRow key={item.name}>
+                  <TableRow key={item.id}>
                     <TableCell>{item.name}</TableCell>
                     <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
                   </TableRow>

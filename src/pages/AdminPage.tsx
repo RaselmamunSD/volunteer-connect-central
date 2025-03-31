@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table';
-import { volunteers, bookings } from '@/data/mockData';
+import { volunteers } from '@/data/mockData';
 import { formatCurrency } from '@/utils/helpers';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,11 +15,18 @@ const AdminPage = () => {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
-  // For donation form
+  // For donation/expense form
   const [donationForm, setDonationForm] = useState({
     name: '',
     amount: '',
     type: 'donation' // Can be 'donation' or 'expense'
+  });
+  
+  // For volunteer donation update
+  const [volunteerForm, setVolunteerForm] = useState({
+    name: '',
+    phone: '',
+    contribution: '',
   });
   
   const handleLogin = (e: React.FormEvent) => {
@@ -46,6 +53,11 @@ const AdminPage = () => {
     setDonationForm(prev => ({ ...prev, [name]: value }));
   };
   
+  const handleVolunteerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setVolunteerForm(prev => ({ ...prev, [name]: value }));
+  };
+  
   const handleDonationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -60,7 +72,7 @@ const AdminPage = () => {
     
     toast({
       title: "সফল",
-      description: donationForm.type === 'donation' ? "ডোনেশন তথ্য সংরক্ষণ করা হয়েছে" : "ব্যয় তথ্য সংরক্ষণ করা হয়েছে",
+      description: donationForm.type === 'donation' ? "আয় তথ্য সংরক্ষণ করা হয়েছে" : "ব্যয় তথ্য সংরক্ষণ করা হয়েছে",
     });
     
     // Reset form
@@ -68,6 +80,31 @@ const AdminPage = () => {
       name: '',
       amount: '',
       type: 'donation'
+    });
+  };
+  
+  const handleVolunteerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!volunteerForm.name || !volunteerForm.contribution) {
+      toast({
+        title: "ত্রুটি",
+        description: "সকল তথ্য পূরণ করুন",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    toast({
+      title: "সফল",
+      description: "ডোনেশন তথ্য সংরক্ষণ করা হয়েছে",
+    });
+    
+    // Reset form
+    setVolunteerForm({
+      name: '',
+      phone: '',
+      contribution: ''
     });
   };
   
@@ -116,61 +153,14 @@ const AdminPage = () => {
   // Total calculations for financial data
   const totalVolunteers = volunteers.length;
   const totalVolunteerContributions = volunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
-  const offlineBookings = bookings.slice(0, Math.floor(bookings.length / 2));
-  const onlineBookings = bookings.slice(Math.floor(bookings.length / 2));
-  const totalOfflineAmount = offlineBookings.reduce((sum, booking) => sum + booking.amount, 0);
-  const totalOnlineAmount = onlineBookings.reduce((sum, booking) => sum + booking.amount, 0);
   
   return (
     <div className="container py-6">
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>আর্থিক ড্যাশবোর্ড</CardTitle>
+          <CardTitle>অ্যাডমিন ড্যাশবোর্ড</CardTitle>
           <CardDescription>আয় বেয় খরচের তথ্য এবং ডোনেশন তথ্য আপডেট করুন</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="py-2">
-                <CardTitle className="text-sm">মোট ডোনেশন</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions)}</p>
-                <p className="text-sm text-muted-foreground">দাতা সংখ্যা: {totalVolunteers}</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="py-2">
-                <CardTitle className="text-sm">অফলাইন বুকিং আয়</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{formatCurrency(totalOfflineAmount)}</p>
-                <p className="text-sm text-muted-foreground">বুকিং সংখ্যা: {offlineBookings.length}</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="py-2">
-                <CardTitle className="text-sm">অনলাইন বুকিং আয়</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{formatCurrency(totalOnlineAmount)}</p>
-                <p className="text-sm text-muted-foreground">বুকিং সংখ্যা: {onlineBookings.length}</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="py-2">
-                <CardTitle className="text-sm">মোট আয়</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions + totalOfflineAmount + totalOnlineAmount)}</p>
-                <p className="text-sm text-muted-foreground">সর্বমোট</p>
-              </CardContent>
-            </Card>
-          </div>
-        </CardContent>
       </Card>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -242,34 +232,82 @@ const AdminPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>ডোনেশন তথ্য আপডেট</CardTitle>
-            <CardDescription>ডোনেশন তথ্য দেখুন এবং আপডেট করুন</CardDescription>
+            <CardDescription>নতুন ডোনেশন তথ্য যোগ করুন</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>নাম</TableHead>
-                  <TableHead className="text-right">অবদান</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {volunteers.map(volunteer => (
-                  <TableRow key={volunteer.id}>
-                    <TableCell className="font-medium">{volunteer.name}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell>মোট</TableCell>
-                  <TableCell className="text-right">{formatCurrency(totalVolunteerContributions)}</TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
+            <form onSubmit={handleVolunteerSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="donorName">দাতার নাম</Label>
+                <Input 
+                  id="donorName" 
+                  name="name"
+                  value={volunteerForm.name} 
+                  onChange={handleVolunteerChange} 
+                  placeholder="দাতার নাম লিখুন" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="donorPhone">ফোন নম্বর</Label>
+                <Input 
+                  id="donorPhone" 
+                  name="phone"
+                  value={volunteerForm.phone} 
+                  onChange={handleVolunteerChange} 
+                  placeholder="ফোন নম্বর লিখুন" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="contribution">অবদান</Label>
+                <Input 
+                  id="contribution" 
+                  name="contribution"
+                  type="number"
+                  value={volunteerForm.contribution} 
+                  onChange={handleVolunteerChange} 
+                  placeholder="টাকার পরিমাণ লিখুন" 
+                />
+              </div>
+              
+              <Button type="submit" className="w-full">সংরক্ষণ করুন</Button>
+            </form>
           </CardContent>
         </Card>
       </div>
+      
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>ডোনেশন তথ্য</CardTitle>
+          <CardDescription>বর্তমান ডোনেশন তথ্য দেখুন</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>নাম</TableHead>
+                <TableHead>ফোন নম্বর</TableHead>
+                <TableHead className="text-right">অবদান</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {volunteers.map(volunteer => (
+                <TableRow key={volunteer.id}>
+                  <TableCell className="font-medium">{volunteer.name}</TableCell>
+                  <TableCell>{volunteer.phone}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={2}>মোট</TableCell>
+                <TableCell className="text-right">{formatCurrency(totalVolunteerContributions)}</TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };

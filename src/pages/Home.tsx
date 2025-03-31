@@ -100,22 +100,22 @@ const Home = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">বুকিং আয়</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalBookingAmount)}</div>
-            <p className="text-xs text-muted-foreground">{bookings.length} বুকিং</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">অফলাইন বুকিং আয়</CardTitle>
             <PhoneCall className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(offlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}</div>
-            <p className="text-xs text-muted-foreground">সরাসরি সংগ্রহ</p>
+            <p className="text-xs text-muted-foreground">{offlineBookings.length} বুকিং</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">অনলাইন বুকিং আয়</CardTitle>
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(onlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}</div>
+            <p className="text-xs text-muted-foreground">{onlineBookings.length} বুকিং</p>
           </CardContent>
         </Card>
       </div>

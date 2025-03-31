@@ -19,7 +19,8 @@ const BkashPaymentPage = () => {
   const [pin, setPin] = useState('');
   const navigate = useNavigate();
   
-  // Fixed amount based on the requirement
+  // Fixed bKash merchant account number and amount as specified
+  const bkashNumber = '01873558407';
   const amount = 510;
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,7 +42,7 @@ const BkashPaymentPage = () => {
     // Start payment processing
     setIsProcessing(true);
     
-    // Simulate API call
+    // Simulate API call to bKash
     setTimeout(() => {
       setIsProcessing(false);
       
@@ -153,7 +154,7 @@ const BkashPaymentPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">বিকাশ অ্যাকাউন্ট</p>
-                  <p className="font-medium">01873558407</p>
+                  <p className="font-medium">{bkashNumber}</p>
                 </div>
               </div>
               

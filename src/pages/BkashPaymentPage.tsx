@@ -1,111 +1,33 @@
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import React from 'react';
+import { Card, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import PaymentForm from '@/components/payment/PaymentForm';
+import PaymentProcessing from '@/components/payment/PaymentProcessing';
+import PaymentSuccess from '@/components/payment/PaymentSuccess';
+import PaymentError from '@/components/payment/PaymentError';
+import { usePaymentProcessor } from '@/hooks/usePaymentProcessor';
 
 const BkashPaymentPage = () => {
-  const { toast } = useToast();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [pin, setPin] = useState('');
-  const navigate = useNavigate();
   const location = useLocation();
+  
+  // Get user info from location state if available
+  const userInfo = location.state?.userInfo || {};
   
   // Fixed bKash merchant account number and amount as specified
   const bkashNumber = '01873558407';
   const amount = 510;
   
-  // Get user info from location state if available
-  const userInfo = location.state?.userInfo || {};
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!phoneNumber) {
-      setErrorMessage('দয়া করে বিকাশ নাম্বার লিখুন');
-      return;
-    }
-    
-    if (!pin) {
-      setErrorMessage('দয়া করে পিন নাম্বার লিখুন');
-      return;
-    }
-    
-    // Reset error
-    setErrorMessage('');
-    
-    // Start payment processing
-    setIsProcessing(true);
-    
-    // Simulate API call to bKash
-    setTimeout(() => {
-      setIsProcessing(false);
-      
-      // 80% chance of success, 20% chance of failure
-      if (Math.random() > 0.2) {
-        setIsSuccess(true);
-        toast({
-          title: "পেমেন্ট সফল হয়েছে",
-          description: "আপনার বুকিং নিশ্চিত করা হয়েছে।",
-        });
-        
-        // Could save booking info to local storage or context here
-        const bookingData = {
-          name: userInfo.name || 'অতিথি',
-          phone: phoneNumber,
-          amount: amount,
-          isPaid: true,
-          timestamp: new Date().toISOString(),
-        };
-        
-        // Save to localStorage for demo purposes
-        try {
-          const existingBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
-          existingBookings.push(bookingData);
-          localStorage.setItem('onlineBookings', JSON.stringify(existingBookings));
-        } catch (err) {
-          console.error('Error saving booking data:', err);
-        }
-      } else {
-        setIsError(true);
-        toast({
-          title: "পেমেন্ট ব্যর্থ হয়েছে",
-          description: "দয়া করে আবার চেষ্টা করুন।",
-          variant: "destructive",
-        });
-      }
-    }, 2000);
-  };
-  
-  const handleRetry = () => {
-    setIsError(false);
-    setPhoneNumber('');
-    setPin('');
-  };
-  
-  const handleGoHome = () => {
-    navigate('/');
-  };
-  
-  useEffect(() => {
-    if (isSuccess || isError) {
-      // Auto redirect after 5 seconds
-      const timer = setTimeout(() => {
-        navigate('/');
-      }, 5000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isSuccess, isError, navigate]);
+  const {
+    isProcessing,
+    isSuccess,
+    isError,
+    handleSubmit,
+    handleRetry,
+    handleGoHome
+  } = usePaymentProcessor(userInfo);
   
   return (
     <div className="container max-w-lg py-8">
@@ -129,96 +51,18 @@ const BkashPaymentPage = () => {
           <CardDescription className="text-center">বিকাশের মাধ্যমে পেমেন্ট করে আসন নিশ্চিত করুন</CardDescription>
         </CardHeader>
         
-        {isProcessing && (
-          <CardContent className="flex flex-col items-center justify-center p-8">
-            <Loader2 className="h-16 w-16 animate-spin text-primary mb-4" />
-            <p className="text-center font-medium text-lg">পেমেন্ট প্রসেস করা হচ্ছে...</p>
-            <p className="text-center text-muted-foreground">দয়া করে অপেক্ষা করুন</p>
-          </CardContent>
-        )}
+        {isProcessing && <PaymentProcessing />}
         
-        {isSuccess && (
-          <CardContent className="flex flex-col items-center justify-center p-8">
-            <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-            <p className="text-center font-medium text-lg">পেমেন্ট সফল হয়েছে!</p>
-            <p className="text-center text-muted-foreground">আপনার আসন বুকিং নিশ্চিত করা হয়েছে</p>
-            <p className="text-center text-muted-foreground mt-4">আপনি স্বয়ংক্রিয়ভাবে হোম পেজে নেওয়া হবে...</p>
-            <Button className="mt-6" onClick={handleGoHome}>
-              হোম পেজে যান
-            </Button>
-          </CardContent>
-        )}
+        {isSuccess && <PaymentSuccess onGoHome={handleGoHome} />}
         
-        {isError && (
-          <CardContent className="flex flex-col items-center justify-center p-8">
-            <AlertCircle className="h-16 w-16 text-destructive mb-4" />
-            <p className="text-center font-medium text-lg">পেমেন্ট ব্যর্থ হয়েছে</p>
-            <p className="text-center text-muted-foreground">দয়া করে আবার চেষ্টা করুন</p>
-            <p className="text-center text-muted-foreground mt-4">আপনি স্বয়ংক্রিয়ভাবে হোম পেজে নেওয়া হবে...</p>
-            <div className="flex gap-4 mt-6">
-              <Button variant="outline" onClick={handleRetry}>
-                আবার চেষ্টা করুন
-              </Button>
-              <Button onClick={handleGoHome}>
-                হোম পেজে যান
-              </Button>
-            </div>
-          </CardContent>
-        )}
+        {isError && <PaymentError onRetry={handleRetry} onGoHome={handleGoHome} />}
         
         {!isProcessing && !isSuccess && !isError && (
-          <CardContent>
-            <div className="mb-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-muted-foreground">মার্চেন্ট</p>
-                  <p className="font-medium">পূর্নমিলনী-২০২৬</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">বিকাশ অ্যাকাউন্ট</p>
-                  <p className="font-medium">{bkashNumber}</p>
-                </div>
-              </div>
-              
-              <Separator className="my-4" />
-              
-              <div className="flex justify-between items-center">
-                <p className="font-medium">মোট মূল্য</p>
-                <p className="text-xl font-bold">{amount} টাকা</p>
-              </div>
-              
-              <Separator className="my-4" />
-            </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">বিকাশ নাম্বার</Label>
-                <Input 
-                  id="phone" 
-                  value={phoneNumber} 
-                  onChange={(e) => setPhoneNumber(e.target.value)} 
-                  placeholder="আপনার বিকাশ নাম্বার লিখুন" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="pin">পিন নাম্বার</Label>
-                <Input 
-                  id="pin"
-                  type="password"
-                  value={pin} 
-                  onChange={(e) => setPin(e.target.value)} 
-                  placeholder="আপনার পিন নাম্বার লিখুন" 
-                />
-              </div>
-              
-              {errorMessage && (
-                <p className="text-sm text-red-500 mt-1">{errorMessage}</p>
-              )}
-              
-              <Button type="submit" className="w-full">পেমেন্ট করুন</Button>
-            </form>
-          </CardContent>
+          <PaymentForm 
+            bkashNumber={bkashNumber}
+            amount={amount}
+            onSubmit={handleSubmit}
+          />
         )}
         
         <CardFooter className="text-center text-sm text-muted-foreground flex-col">

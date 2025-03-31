@@ -17,6 +17,7 @@ import VolunteerLogin from "./pages/VolunteerLogin";
 import NotFound from "./pages/NotFound";
 import NoticePage from "./pages/NoticePage";
 import FinancePage from "./pages/FinancePage";
+import BkashPaymentPage from "./pages/BkashPaymentPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/admin/login" element={<Layout><AdminLogin /></Layout>} />
           <Route path="/notice" element={<Layout><NoticePage /></Layout>} />
           <Route path="/finance" element={<Layout><FinancePage /></Layout>} />
+          <Route path="/bkash-payment" element={<BkashPaymentPage />} />
           <Route path="*" element={<Layout><NotFound /></Layout>} />
         </Routes>
       </BrowserRouter>

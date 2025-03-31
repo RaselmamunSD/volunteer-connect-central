@@ -103,6 +103,11 @@
   .nav-button-highlight {
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-medium;
   }
+  
+  /* Enhance Button Contrast in Light Mode */
+  .light button[variant="secondary"] {
+    @apply text-white bg-secondary hover:bg-secondary/90;
+  }
 }
 
 .banner-gradient {
@@ -171,4 +176,20 @@
 
 .dark .event-card:hover {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Button visibility improvements */
+:root {
+  --button-bg-light: #4c1d95;
+  --button-text-light: #ffffff; 
+}
+
+.light .btn-action {
+  background-color: var(--button-bg-light) !important;
+  color: var(--button-text-light) !important;
+}
+
+/* Custom background for bKash page */
+.bg-gradient-bkash {
+  background: linear-gradient(135deg, #e2136e 0%, #e91e63 100%);
 }

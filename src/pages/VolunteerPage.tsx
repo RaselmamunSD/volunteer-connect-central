@@ -26,7 +26,7 @@ const VolunteerPage = () => {
               <CardTitle>স্বেচ্ছাসেবক লগইন করুন</CardTitle>
             </div>
             <CardDescription>
-              পূর্নমিলনী অনুষ্ঠানে স্বেচ্ছাসেবক হিসেবে আসন বুকিং করতে লগইন করুন
+              পূর্নমিলনী অনুষ্ঠানে স্বেচ্ছাসেবক হিসেবে অফলাইন বুকিং করতে লগইন করুন
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -51,7 +51,7 @@ const VolunteerPage = () => {
           </CardHeader>
           <CardContent>
             <ul className="list-disc pl-5 space-y-2">
-              <li>মেনুয়ালি আসন বুকিং করে দেওয়া</li>
+              <li>অফলাইন আসন বুকিং করে দেওয়া</li>
               <li>অনুষ্ঠানের দিন অভ্যর্থনা ব্যবস্থায় সহায়তা করা</li>
               <li>অতিথিদের গাইড করা</li>
               <li>অনুষ্ঠানের জন্য প্রচার করা</li>
@@ -59,7 +59,7 @@ const VolunteerPage = () => {
             </ul>
           </CardContent>
           <CardFooter>
-            <p className="text-sm text-muted-foreground">লগইন করার পর আপনি আসন বুকিং করতে পারবেন</p>
+            <p className="text-sm text-muted-foreground">লগইন করার পর আপনি অফলাইন বুকিং করতে পারবেন</p>
           </CardFooter>
         </Card>
       </div>

@@ -4,9 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table';
 import { volunteers, bookings } from '@/data/mockData';
 import { formatCurrency } from '@/utils/helpers';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +14,13 @@ const AdminPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // For donation form
+  const [donationForm, setDonationForm] = useState({
+    name: '',
+    amount: '',
+    type: 'donation' // Can be 'donation' or 'expense'
+  });
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +39,36 @@ const AdminPage = () => {
         variant: "destructive",
       });
     }
+  };
+  
+  const handleDonationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDonationForm(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleDonationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!donationForm.name || !donationForm.amount) {
+      toast({
+        title: "ত্রুটি",
+        description: "সকল তথ্য পূরণ করুন",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    toast({
+      title: "সফল",
+      description: donationForm.type === 'donation' ? "ডোনেশন তথ্য সংরক্ষণ করা হয়েছে" : "ব্যয় তথ্য সংরক্ষণ করা হয়েছে",
+    });
+    
+    // Reset form
+    setDonationForm({
+      name: '',
+      amount: '',
+      type: 'donation'
+    });
   };
   
   if (!isLoggedIn) {
@@ -78,142 +113,163 @@ const AdminPage = () => {
     );
   }
   
-  // Total calculations
+  // Total calculations for financial data
   const totalVolunteers = volunteers.length;
   const totalVolunteerContributions = volunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
-  const totalBookings = bookings.length;
-  const totalBookingAmount = bookings.reduce((sum, booking) => sum + booking.amount, 0);
-  const paidBookings = bookings.filter(booking => booking.isPaid);
-  const unpaidBookings = bookings.filter(booking => !booking.isPaid);
+  const offlineBookings = bookings.slice(0, Math.floor(bookings.length / 2));
+  const onlineBookings = bookings.slice(Math.floor(bookings.length / 2));
+  const totalOfflineAmount = offlineBookings.reduce((sum, booking) => sum + booking.amount, 0);
+  const totalOnlineAmount = onlineBookings.reduce((sum, booking) => sum + booking.amount, 0);
   
   return (
     <div className="container py-6">
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>অ্যাডমিন ড্যাশবোর্ড</CardTitle>
-          <CardDescription>সমস্ত তথ্য এবং পরিসংখ্যান এখানে দেখুন</CardDescription>
+          <CardTitle>আর্থিক ড্যাশবোর্ড</CardTitle>
+          <CardDescription>আয় বেয় খরচের তথ্য এবং ডোনেশন তথ্য আপডেট করুন</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card>
               <CardHeader className="py-2">
-                <CardTitle className="text-sm">মোট স্বেচ্ছাসেবক</CardTitle>
+                <CardTitle className="text-sm">মোট ডোনেশন</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">{totalVolunteers}</p>
-                <p className="text-sm text-muted-foreground">মোট অবদান: {formatCurrency(totalVolunteerContributions)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions)}</p>
+                <p className="text-sm text-muted-foreground">দাতা সংখ্যা: {totalVolunteers}</p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader className="py-2">
-                <CardTitle className="text-sm">মোট বুকিং</CardTitle>
+                <CardTitle className="text-sm">অফলাইন বুকিং আয়</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">{totalBookings}</p>
-                <p className="text-sm text-muted-foreground">মোট আয়: {formatCurrency(totalBookingAmount)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalOfflineAmount)}</p>
+                <p className="text-sm text-muted-foreground">বুকিং সংখ্যা: {offlineBookings.length}</p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader className="py-2">
-                <CardTitle className="text-sm">পেমেন্ট কৃত</CardTitle>
+                <CardTitle className="text-sm">অনলাইন বুকিং আয়</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">{paidBookings.length}</p>
-                <p className="text-sm text-muted-foreground">মোট আয়: {formatCurrency(paidBookings.reduce((sum, booking) => sum + booking.amount, 0))}</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalOnlineAmount)}</p>
+                <p className="text-sm text-muted-foreground">বুকিং সংখ্যা: {onlineBookings.length}</p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader className="py-2">
-                <CardTitle className="text-sm">পেমেন্ট বাকি</CardTitle>
+                <CardTitle className="text-sm">মোট আয়</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold">{unpaidBookings.length}</p>
-                <p className="text-sm text-muted-foreground">বাকি আয়: {formatCurrency(unpaidBookings.reduce((sum, booking) => sum + booking.amount, 0))}</p>
+                <p className="text-2xl font-bold">{formatCurrency(totalVolunteerContributions + totalOfflineAmount + totalOnlineAmount)}</p>
+                <p className="text-sm text-muted-foreground">সর্বমোট</p>
               </CardContent>
             </Card>
           </div>
         </CardContent>
       </Card>
       
-      <Tabs defaultValue="volunteers">
-        <TabsList className="mb-4">
-          <TabsTrigger value="volunteers">স্বেচ্ছাসেবক</TabsTrigger>
-          <TabsTrigger value="bookings">বুকিং</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>আয় বেয় খরচ আপডেট</CardTitle>
+            <CardDescription>নতুন আয় বা ব্যয় যোগ করুন</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleDonationSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">বিবরণ</Label>
+                <Input 
+                  id="name" 
+                  name="name"
+                  value={donationForm.name} 
+                  onChange={handleDonationChange} 
+                  placeholder="বিবরণ লিখুন" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="amount">পরিমাণ</Label>
+                <Input 
+                  id="amount" 
+                  name="amount"
+                  type="number"
+                  value={donationForm.amount} 
+                  onChange={handleDonationChange} 
+                  placeholder="টাকার পরিমাণ লিখুন" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>ধরণ</Label>
+                <div className="flex gap-4">
+                  <div className="flex items-center">
+                    <Input
+                      type="radio"
+                      id="donation"
+                      name="type"
+                      value="donation"
+                      checked={donationForm.type === 'donation'}
+                      onChange={handleDonationChange}
+                      className="mr-2 h-4 w-4"
+                    />
+                    <Label htmlFor="donation" className="cursor-pointer">আয়</Label>
+                  </div>
+                  <div className="flex items-center">
+                    <Input
+                      type="radio"
+                      id="expense"
+                      name="type"
+                      value="expense"
+                      checked={donationForm.type === 'expense'}
+                      onChange={handleDonationChange}
+                      className="mr-2 h-4 w-4"
+                    />
+                    <Label htmlFor="expense" className="cursor-pointer">ব্যয়</Label>
+                  </div>
+                </div>
+              </div>
+              
+              <Button type="submit" className="w-full">সংরক্ষণ করুন</Button>
+            </form>
+          </CardContent>
+        </Card>
         
-        <TabsContent value="volunteers">
-          <Card>
-            <CardHeader>
-              <CardTitle>স্বেচ্ছাসেবক তালিকা</CardTitle>
-              <CardDescription>সমস্ত নিবন্ধিত স্বেচ্ছাসেবকদের তথ্য</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>নাম</TableHead>
-                    <TableHead>ফোন</TableHead>
-                    <TableHead>ঠিকানা</TableHead>
-                    <TableHead className="text-right">অবদান</TableHead>
+        <Card>
+          <CardHeader>
+            <CardTitle>ডোনেশন তথ্য আপডেট</CardTitle>
+            <CardDescription>ডোনেশন তথ্য দেখুন এবং আপডেট করুন</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>নাম</TableHead>
+                  <TableHead className="text-right">অবদান</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {volunteers.map(volunteer => (
+                  <TableRow key={volunteer.id}>
+                    <TableCell className="font-medium">{volunteer.name}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {volunteers.map(volunteer => (
-                    <TableRow key={volunteer.id}>
-                      <TableCell className="font-medium">{volunteer.name}</TableCell>
-                      <TableCell>{volunteer.phone}</TableCell>
-                      <TableCell>{volunteer.address}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="bookings">
-          <Card>
-            <CardHeader>
-              <CardTitle>বুকিং তালিকা</CardTitle>
-              <CardDescription>সমস্ত বুকিংয়ের তথ্য</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>নাম</TableHead>
-                    <TableHead>ফোন</TableHead>
-                    <TableHead>ঠিকানা</TableHead>
-                    <TableHead>পরিমাণ</TableHead>
-                    <TableHead>স্ট্যাটাস</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {bookings.map(booking => (
-                    <TableRow key={booking.id}>
-                      <TableCell className="font-medium">{booking.name}</TableCell>
-                      <TableCell>{booking.phone}</TableCell>
-                      <TableCell>{booking.address}</TableCell>
-                      <TableCell>{formatCurrency(booking.amount)}</TableCell>
-                      <TableCell>
-                        {booking.isPaid ? (
-                          <Badge>পেমেন্ট সম্পন্ন</Badge>
-                        ) : (
-                          <Badge variant="outline">পেমেন্ট বাকি</Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell>মোট</TableCell>
+                  <TableCell className="text-right">{formatCurrency(totalVolunteerContributions)}</TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -25,9 +25,9 @@ const Home = () => {
   const paidBookings = bookings.filter(booking => booking.isPaid);
   const unpaidBookings = bookings.filter(booking => !booking.isPaid);
   
-  // Separate volunteer-made bookings from online bookings
-  // For demo, we'll assume half of the bookings are made by volunteers
-  const volunteerBookings = bookings.slice(0, Math.floor(bookings.length / 2));
+  // Separate offline and online bookings
+  // For demo, we'll assume half of the bookings are offline
+  const offlineBookings = bookings.slice(0, Math.floor(bookings.length / 2));
   const onlineBookings = bookings.slice(Math.floor(bookings.length / 2));
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,15 +42,8 @@ const Home = () => {
       return;
     }
     
-    toast({
-      title: "সফল",
-      description: "বিকাশ পেমেন্ট পেজে রিডাইরেক্ট করা হচ্ছে...",
-    });
-    
-    // Reset form
-    setName('');
-    setPhone('');
-    setAddress('');
+    // Redirect to a simulated bKash payment interface
+    window.location.href = '/bkash-payment';
   };
 
   return (
@@ -66,16 +59,16 @@ const Home = () => {
           <Button asChild variant="secondary">
             <Link to="/volunteer/login">স্বেচ্ছাসেবক হিসাবে যোগদান করুন</Link>
           </Button>
-          <Button asChild variant="outline">
-            <Link to="/concert">অনুষ্ঠান দেখুন</Link>
+          <Button asChild variant="secondary">
+            <Link to="/concert">অনুষ্ঠান</Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button asChild variant="secondary">
             <Link to="/notice">
               <Bell className="mr-2 h-4 w-4" />
               নোটিশ
             </Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button asChild variant="secondary">
             <Link to="/finance">
               <BarChart4 className="mr-2 h-4 w-4" />
               আয় বেয় খরচ
@@ -117,12 +110,12 @@ const Home = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">যোগাযোগ</CardTitle>
+            <CardTitle className="text-sm font-medium">অফলাইন বুকিং আয়</CardTitle>
             <PhoneCall className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">০১৭৬৮৮০৭২২৬</div>
-            <p className="text-xs text-muted-foreground">প্রয়োজনে কল করুন</p>
+            <div className="text-2xl font-bold">{formatCurrency(offlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}</div>
+            <p className="text-xs text-muted-foreground">সরাসরি সংগ্রহ</p>
           </CardContent>
         </Card>
       </div>
@@ -195,7 +188,7 @@ const Home = () => {
       <Tabs defaultValue="all" className="mb-8">
         <TabsList className="mb-4">
           <TabsTrigger value="all">সমস্ত বুকিং</TabsTrigger>
-          <TabsTrigger value="volunteer">স্বেচ্ছাসেবক বুকিং</TabsTrigger>
+          <TabsTrigger value="offline">অফলাইন বুকিং</TabsTrigger>
           <TabsTrigger value="online">অনলাইন বুকিং</TabsTrigger>
         </TabsList>
         
@@ -231,15 +224,15 @@ const Home = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="volunteer">
+        <TabsContent value="offline">
           <Card>
             <CardHeader>
-              <CardTitle>স্বেচ্ছাসেবক কর্তৃক বুকিং</CardTitle>
+              <CardTitle>অফলাইন বুকিং</CardTitle>
               <CardDescription>স্বেচ্ছাসেবকদের দ্বারা করা বুকিংয়ের তালিকা</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {volunteerBookings.map(booking => (
+                {offlineBookings.map(booking => (
                   <Card key={booking.id} className="event-card">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">{booking.name}</CardTitle>

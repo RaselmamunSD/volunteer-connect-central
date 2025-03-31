@@ -106,7 +106,7 @@ const VolunteerLogin = () => {
       <div className="container py-6">
         <Card>
           <CardHeader>
-            <CardTitle>মেনুয়াল আসন বুকিং</CardTitle>
+            <CardTitle>অফলাইন বুকিং</CardTitle>
             <CardDescription>স্বেচ্ছাসেবক হিসেবে অন্যদের জন্য আসন বুক করুন</CardDescription>
           </CardHeader>
           <CardContent>
@@ -164,7 +164,7 @@ const VolunteerLogin = () => {
                 {bookingErrors.amount && <p className="text-sm text-red-500">{bookingErrors.amount}</p>}
               </div>
               
-              <Button type="submit" className="w-full">আসন বুক করুন</Button>
+              <Button type="submit" className="w-full">অফলাইন বুকিং করুন</Button>
             </form>
           </CardContent>
           <CardFooter className="flex justify-between">

@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,9 +13,11 @@ import { CalendarDays, CreditCard, Users, Calendar, UserCheck, PhoneCall, Bell, 
 
 const Home = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [localBookings, setLocalBookings] = useState([]);
 
   const totalVolunteerContributions = calculateTotal(volunteers);
   const totalBookingAmount = calculateTotal(bookings);
@@ -28,7 +29,17 @@ const Home = () => {
   // Separate offline and online bookings
   // For demo, we'll assume half of the bookings are offline
   const offlineBookings = bookings.slice(0, Math.floor(bookings.length / 2));
-  const onlineBookings = bookings.slice(Math.floor(bookings.length / 2));
+  const onlineBookings = [...bookings.slice(Math.floor(bookings.length / 2)), ...localBookings];
+
+  // Load online bookings from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedOnlineBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
+      setLocalBookings(savedOnlineBookings);
+    } catch (err) {
+      console.error('Error loading online bookings:', err);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +53,16 @@ const Home = () => {
       return;
     }
     
-    // Redirect to a simulated bKash payment interface
-    window.location.href = '/bkash-payment';
+    // Navigate to bKash payment page with user information
+    navigate('/bkash-payment', {
+      state: {
+        userInfo: {
+          name,
+          phone,
+          address
+        }
+      }
+    });
   };
 
   return (
@@ -114,7 +133,9 @@ const Home = () => {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(onlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}</div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(onlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}
+            </div>
             <p className="text-xs text-muted-foreground">{onlineBookings.length} বুকিং</p>
           </CardContent>
         </Card>

@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const BkashPaymentPage = () => {
   const { toast } = useToast();
@@ -18,10 +18,14 @@ const BkashPaymentPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [pin, setPin] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Fixed bKash merchant account number and amount as specified
   const bkashNumber = '01873558407';
   const amount = 510;
+  
+  // Get user info from location state if available
+  const userInfo = location.state?.userInfo || {};
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +57,24 @@ const BkashPaymentPage = () => {
           title: "পেমেন্ট সফল হয়েছে",
           description: "আপনার বুকিং নিশ্চিত করা হয়েছে।",
         });
+        
+        // Could save booking info to local storage or context here
+        const bookingData = {
+          name: userInfo.name || 'অতিথি',
+          phone: phoneNumber,
+          amount: amount,
+          isPaid: true,
+          timestamp: new Date().toISOString(),
+        };
+        
+        // Save to localStorage for demo purposes
+        try {
+          const existingBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
+          existingBookings.push(bookingData);
+          localStorage.setItem('onlineBookings', JSON.stringify(existingBookings));
+        } catch (err) {
+          console.error('Error saving booking data:', err);
+        }
       } else {
         setIsError(true);
         toast({

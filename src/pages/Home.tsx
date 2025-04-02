@@ -11,7 +11,6 @@ import { volunteers, bookings } from '@/data/mockData';
 import { calculateTotal, formatCurrency } from '@/utils/helpers';
 import { CalendarDays, CreditCard, Users, Calendar, UserCheck, PhoneCall, Bell, BarChart4 } from 'lucide-react';
 
-// Initial financial data
 const initialIncomeData = [
   { id: 1, name: 'অনুষ্ঠান টিকেট বিক্রয়', value: 250000 },
   { id: 2, name: 'ডোনেশন', value: 180000 },
@@ -35,6 +34,7 @@ const Home = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [formNumber, setFormNumber] = useState('');
+  const [batchNumber, setBatchNumber] = useState('');
   const [localVolunteers, setLocalVolunteers] = useState(volunteers);
   const [localOfflineBookings, setLocalOfflineBookings] = useState([]);
   const [localOnlineBookings, setLocalOnlineBookings] = useState([]);
@@ -94,7 +94,8 @@ const Home = () => {
           name,
           phone,
           address,
-          formNumber
+          formNumber,
+          batchNumber
         }
       }
     });
@@ -243,6 +244,15 @@ const Home = () => {
                     value={formNumber} 
                     onChange={(e) => setFormNumber(e.target.value)} 
                     placeholder="ফর্ম নম্বর লিখুন" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="batchNumber">ব্যাচ নং</Label>
+                  <Input 
+                    id="batchNumber" 
+                    value={batchNumber} 
+                    onChange={(e) => setBatchNumber(e.target.value)} 
+                    placeholder="ব্যাচ নম্বর লিখুন" 
                   />
                 </div>
                 <Button type="submit" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>

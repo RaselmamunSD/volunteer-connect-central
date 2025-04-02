@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ const VolunteerLogin = () => {
     phone: '',
     address: '',
     amount: '',
+    formNumber: '', // Added form number field
     batchNumber: ''
   });
   
@@ -107,6 +109,7 @@ const VolunteerLogin = () => {
       phone: bookingForm.phone,
       address: bookingForm.address,
       amount: parseFloat(bookingForm.amount) || 0,
+      formNumber: bookingForm.formNumber || '', // Added form number
       batchNumber: bookingForm.batchNumber || '',
       isPaid: true, // Offline bookings are considered paid
       bookingDate: new Date().toISOString(),
@@ -131,6 +134,7 @@ const VolunteerLogin = () => {
       phone: '',
       address: '',
       amount: '',
+      formNumber: '',
       batchNumber: ''
     });
   };
@@ -196,6 +200,19 @@ const VolunteerLogin = () => {
                   className={bookingErrors.amount ? "border-red-500" : ""}
                 />
                 {bookingErrors.amount && <p className="text-sm text-red-500">{bookingErrors.amount}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="booking-form">ফর্ম নং</Label>
+                <Input 
+                  id="booking-form" 
+                  name="formNumber"
+                  value={bookingForm.formNumber} 
+                  onChange={handleBookingChange} 
+                  placeholder="ফর্ম নম্বর লিখুন"
+                  className={bookingErrors.formNumber ? "border-red-500" : ""}
+                />
+                {bookingErrors.formNumber && <p className="text-sm text-red-500">{bookingErrors.formNumber}</p>}
               </div>
               
               <div className="space-y-2">

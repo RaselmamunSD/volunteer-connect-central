@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash } from 'lucide-react';
 
-// Define types for our data
 interface Volunteer {
   id: number;
   name: string;
@@ -39,7 +37,6 @@ interface Booking {
   paymentType?: string;
 }
 
-// Initial financial data
 const initialIncomeData = [
   { id: 1, name: 'অনুষ্ঠান টিকেট বিক্রয়', value: 250000 },
   { id: 2, name: 'ডোনেশন', value: 180000 },
@@ -62,26 +59,22 @@ const AdminPage = () => {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
-  // For donation/expense form
   const [donationForm, setDonationForm] = useState({
     name: '',
     amount: '',
-    type: 'donation' // Can be 'donation' or 'expense'
+    type: 'donation'
   });
   
-  // For volunteer donation update
   const [volunteerForm, setVolunteerForm] = useState({
     name: '',
     phone: '',
-    contribution: '',
+    contribution: ''
   });
 
-  // For editing items
   const [editingItem, setEditingItem] = useState<FinancialItem | null>(null);
   const [editingVolunteer, setEditingVolunteer] = useState<Volunteer | null>(null);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
 
-  // For tracking volunteers and financial data
   const [localVolunteers, setLocalVolunteers] = useState<Volunteer[]>([]);
   const [incomeData, setIncomeData] = useState<FinancialItem[]>([]);
   const [expenseData, setExpenseData] = useState<FinancialItem[]>([]);
@@ -89,7 +82,6 @@ const AdminPage = () => {
   const [offlineBookings, setOfflineBookings] = useState<Booking[]>([]);
   const [onlineBookings, setOnlineBookings] = useState<Booking[]>([]);
   
-  // Load data from localStorage on component mount
   useEffect(() => {
     try {
       const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
@@ -106,7 +98,6 @@ const AdminPage = () => {
       setLocalBookings([...savedOfflineBookings, ...savedOnlineBookings]);
     } catch (err) {
       console.error('Error loading data from localStorage:', err);
-      // Fallback to initial data if there's an error
       setLocalVolunteers(volunteers);
       setIncomeData(initialIncomeData);
       setExpenseData(initialExpenseData);
@@ -119,7 +110,6 @@ const AdminPage = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple login check (in a real app, this would validate against a server)
     if (username === 'admin' && password === 'admin') {
       setIsLoggedIn(true);
       toast({
@@ -161,7 +151,6 @@ const AdminPage = () => {
     
     if (donationForm.type === 'donation') {
       if (editingItem) {
-        // Update existing income item
         const updatedIncomeData = incomeData.map(item => 
           item.id === editingItem.id ? { ...item, name: donationForm.name, value: amount } : item
         );
@@ -174,7 +163,6 @@ const AdminPage = () => {
           description: "আয় তথ্য আপডেট করা হয়েছে",
         });
       } else {
-        // Add new income data
         const newIncomeItem = {
           id: Date.now(),
           name: donationForm.name,
@@ -192,7 +180,6 @@ const AdminPage = () => {
       }
     } else {
       if (editingItem) {
-        // Update existing expense item
         const updatedExpenseData = expenseData.map(item => 
           item.id === editingItem.id ? { ...item, name: donationForm.name, value: amount } : item
         );
@@ -205,7 +192,6 @@ const AdminPage = () => {
           description: "ব্যয় তথ্য আপডেট করা হয়েছে",
         });
       } else {
-        // Add new expense data
         const newExpenseItem = {
           id: Date.now(),
           name: donationForm.name,
@@ -223,7 +209,6 @@ const AdminPage = () => {
       }
     }
     
-    // Reset form
     setDonationForm({
       name: '',
       amount: '',
@@ -244,7 +229,6 @@ const AdminPage = () => {
     }
     
     if (editingVolunteer) {
-      // Update existing volunteer
       const updatedVolunteers = localVolunteers.map(volunteer => 
         volunteer.id === editingVolunteer.id ? {
           ...volunteer,
@@ -263,7 +247,6 @@ const AdminPage = () => {
         description: "ডোনেশন তথ্য আপডেট করা হয়েছে",
       });
     } else {
-      // Add new volunteer donation
       const newVolunteer: Volunteer = {
         id: Date.now(),
         name: volunteerForm.name,
@@ -282,7 +265,6 @@ const AdminPage = () => {
       });
     }
     
-    // Reset form
     setVolunteerForm({
       name: '',
       phone: '',
@@ -352,7 +334,6 @@ const AdminPage = () => {
 
   const handleEditBooking = (booking: Booking) => {
     setEditingBooking(booking);
-    // Add editing functionality for bookings if needed
   };
 
   const handleDeleteBooking = (id: number, type: string) => {
@@ -366,7 +347,6 @@ const AdminPage = () => {
       localStorage.setItem('onlineBookings', JSON.stringify(updatedBookings));
     }
     
-    // Update combined bookings
     setLocalBookings([
       ...offlineBookings.filter(booking => booking.id !== id),
       ...onlineBookings.filter(booking => booking.id !== id)
@@ -378,7 +358,6 @@ const AdminPage = () => {
     });
   };
   
-  // Calculate total volunteer contributions
   const totalVolunteerContributions = localVolunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
   
   if (!isLoggedIn) {
@@ -782,12 +761,12 @@ const AdminPage = () => {
                       <TableCell>{booking.phone}</TableCell>
                       <TableCell>{booking.address}</TableCell>
                       <TableCell>
-                        <Badge variant={booking.isPaid ? "success" : "outline"}>
+                        <Badge variant={booking.isPaid ? "default" : "outline"}>
                           {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={booking.paymentType === 'offline' ? "secondary" : "primary"}>
+                        <Badge variant={booking.paymentType === 'offline' ? "secondary" : "default"}>
                           {booking.paymentType === 'offline' ? "অফলাইন" : "অনলাইন"}
                         </Badge>
                       </TableCell>

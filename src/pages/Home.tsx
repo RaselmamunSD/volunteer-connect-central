@@ -36,7 +36,8 @@ const Home = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [localVolunteers, setLocalVolunteers] = useState(volunteers);
-  const [localBookings, setLocalBookings] = useState([]);
+  const [localOfflineBookings, setLocalOfflineBookings] = useState([]);
+  const [localOnlineBookings, setLocalOnlineBookings] = useState([]);
   const [incomeData, setIncomeData] = useState(initialIncomeData);
   const [expenseData, setExpenseData] = useState(initialExpenseData);
 
@@ -44,37 +45,38 @@ const Home = () => {
   useEffect(() => {
     try {
       const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
-      const savedBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
+      const savedOfflineBookings = JSON.parse(localStorage.getItem('offlineBookings') || '[]');
+      const savedOnlineBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
       const savedIncomeData = JSON.parse(localStorage.getItem('incomeData') || JSON.stringify(initialIncomeData));
       const savedExpenseData = JSON.parse(localStorage.getItem('expenseData') || JSON.stringify(initialExpenseData));
       
       setLocalVolunteers(savedVolunteers);
-      setLocalBookings(savedBookings);
+      setLocalOfflineBookings(savedOfflineBookings);
+      setLocalOnlineBookings(savedOnlineBookings);
       setIncomeData(savedIncomeData);
       setExpenseData(savedExpenseData);
     } catch (err) {
       console.error('Error loading data from localStorage:', err);
       // Fallback to initial data if there's an error
       setLocalVolunteers(volunteers);
-      setLocalBookings([]);
+      setLocalOfflineBookings([]);
+      setLocalOnlineBookings([]);
       setIncomeData(initialIncomeData);
       setExpenseData(initialExpenseData);
     }
   }, []);
 
   const totalVolunteerContributions = localVolunteers.reduce((sum, volunteer) => sum + (volunteer.contribution || 0), 0);
-  const totalBookingAmount = bookings.reduce((sum, booking) => sum + (booking.amount || 0), 0);
+  
+  const offlineBookings = [...localOfflineBookings];
+  const onlineBookings = [...localOnlineBookings];
+  const allBookings = [...offlineBookings, ...onlineBookings];
+  
+  const offlineBookingTotal = offlineBookings.reduce((sum, booking) => sum + (booking.amount || 0), 0);
+  const onlineBookingTotal = onlineBookings.reduce((sum, booking) => sum + (booking.amount || 0), 0);
+  
   const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0);
   const totalExpense = expenseData.reduce((sum, item) => sum + item.value, 0);
-  
-  // Filter paid and unpaid bookings
-  const paidBookings = bookings.filter(booking => booking.isPaid);
-  const unpaidBookings = bookings.filter(booking => !booking.isPaid);
-  
-  // Separate offline and online bookings
-  // For demo, we'll assume half of the bookings are offline
-  const offlineBookings = bookings.slice(0, Math.floor(bookings.length / 2));
-  const onlineBookings = [...bookings.slice(Math.floor(bookings.length / 2)), ...localBookings];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,7 +162,7 @@ const Home = () => {
             <PhoneCall className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(offlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}</div>
+            <div className="text-2xl font-bold">{formatCurrency(offlineBookingTotal)}</div>
             <p className="text-xs text-muted-foreground">{offlineBookings.length} বুকিং</p>
           </CardContent>
         </Card>
@@ -171,7 +173,7 @@ const Home = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(onlineBookings.reduce((sum, booking) => sum + booking.amount, 0))}
+              {formatCurrency(onlineBookingTotal)}
             </div>
             <p className="text-xs text-muted-foreground">{onlineBookings.length} বুকিং</p>
           </CardContent>
@@ -258,25 +260,32 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {bookings.map(booking => (
-                  <Card key={booking.id} className="event-card">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{booking.name}</CardTitle>
-                      <CardDescription>{booking.phone}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">{booking.address}</span>
-                        <Badge variant={booking.isPaid ? "default" : "outline"}>
-                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                {allBookings.length > 0 ? (
+                  allBookings.map(booking => (
+                    <Card key={booking.id} className="event-card">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">{booking.name}</CardTitle>
+                        <CardDescription>{booking.phone}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">{booking.address}</span>
+                          <Badge variant={booking.isPaid ? "default" : "outline"}>
+                            {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="flex justify-between">
+                        <Badge variant={booking.paymentType === 'offline' ? "secondary" : "primary"}>
+                          {booking.paymentType === 'offline' ? "অফলাইন" : "অনলাইন"}
                         </Badge>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                    </CardFooter>
-                  </Card>
-                ))}
+                        <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                      </CardFooter>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-center col-span-3 py-8 text-muted-foreground">কোনো বুকিং তথ্য পাওয়া যায়নি</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -290,25 +299,29 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {offlineBookings.map(booking => (
-                  <Card key={booking.id} className="event-card">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{booking.name}</CardTitle>
-                      <CardDescription>{booking.phone}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">{booking.address}</span>
-                        <Badge variant={booking.isPaid ? "default" : "outline"}>
-                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                    </CardFooter>
-                  </Card>
-                ))}
+                {offlineBookings.length > 0 ? (
+                  offlineBookings.map(booking => (
+                    <Card key={booking.id} className="event-card">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">{booking.name}</CardTitle>
+                        <CardDescription>{booking.phone}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">{booking.address}</span>
+                          <Badge variant={booking.isPaid ? "default" : "outline"}>
+                            {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                      </CardFooter>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-center col-span-3 py-8 text-muted-foreground">কোনো অফলাইন বুকিং তথ্য পাওয়া যায়নি</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -322,25 +335,29 @@ const Home = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {onlineBookings.map(booking => (
-                  <Card key={booking.id} className="event-card">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{booking.name}</CardTitle>
-                      <CardDescription>{booking.phone}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">{booking.address}</span>
-                        <Badge variant={booking.isPaid ? "default" : "outline"}>
-                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                    </CardFooter>
-                  </Card>
-                ))}
+                {onlineBookings.length > 0 ? (
+                  onlineBookings.map(booking => (
+                    <Card key={booking.id} className="event-card">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">{booking.name}</CardTitle>
+                        <CardDescription>{booking.phone}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">{booking.address}</span>
+                          <Badge variant={booking.isPaid ? "default" : "outline"}>
+                            {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                      </CardFooter>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-center col-span-3 py-8 text-muted-foreground">কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি</p>
+                )}
               </div>
             </CardContent>
           </Card>

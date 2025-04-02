@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { validateForm } from '@/utils/helpers';
+import { bookings } from '@/data/mockData';
 
 const VolunteerLogin = () => {
   const { toast } = useToast();
@@ -28,6 +29,20 @@ const VolunteerLogin = () => {
   // Form errors
   const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
   const [bookingErrors, setBookingErrors] = useState<Record<string, string>>({});
+  
+  // Local bookings state
+  const [localBookings, setLocalBookings] = useState<any[]>([]);
+  
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedOfflineBookings = JSON.parse(localStorage.getItem('offlineBookings') || '[]');
+      setLocalBookings(savedOfflineBookings);
+    } catch (err) {
+      console.error('Error loading data from localStorage:', err);
+      setLocalBookings([]);
+    }
+  }, []);
   
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,8 +100,25 @@ const VolunteerLogin = () => {
       return;
     }
     
-    // Booking would typically send data to a server
-    // For this demo, we just show a success message
+    // Create new booking object
+    const newBooking = {
+      id: Date.now(),
+      name: bookingForm.name,
+      phone: bookingForm.phone,
+      address: bookingForm.address,
+      amount: parseFloat(bookingForm.amount) || 0,
+      isPaid: true, // Offline bookings are considered paid
+      bookingDate: new Date().toISOString(),
+      paymentType: 'offline'
+    };
+    
+    // Update local state
+    const updatedBookings = [...localBookings, newBooking];
+    setLocalBookings(updatedBookings);
+    
+    // Save to localStorage
+    localStorage.setItem('offlineBookings', JSON.stringify(updatedBookings));
+    
     toast({
       title: "আসন বুকিং সফল হয়েছে",
       description: "আসন বুকিং করার জন্য আপনাকে ধন্যবাদ!",

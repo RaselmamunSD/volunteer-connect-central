@@ -59,6 +59,8 @@ const FinancePage = () => {
   const [incomeData, setIncomeData] = useState(initialIncomeData);
   const [expenseData, setExpenseData] = useState(initialExpenseData);
   const [localVolunteers, setLocalVolunteers] = useState(volunteers);
+  const [offlineBookings, setOfflineBookings] = useState([]);
+  const [onlineBookings, setOnlineBookings] = useState([]);
 
   // Load data from localStorage on component mount
   useEffect(() => {
@@ -66,16 +68,22 @@ const FinancePage = () => {
       const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
       const savedIncomeData = JSON.parse(localStorage.getItem('incomeData') || JSON.stringify(initialIncomeData));
       const savedExpenseData = JSON.parse(localStorage.getItem('expenseData') || JSON.stringify(initialExpenseData));
+      const savedOfflineBookings = JSON.parse(localStorage.getItem('offlineBookings') || '[]');
+      const savedOnlineBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
       
       setLocalVolunteers(savedVolunteers);
       setIncomeData(savedIncomeData);
       setExpenseData(savedExpenseData);
+      setOfflineBookings(savedOfflineBookings);
+      setOnlineBookings(savedOnlineBookings);
     } catch (err) {
       console.error('Error loading data from localStorage:', err);
       // Fallback to initial data if there's an error
       setLocalVolunteers(volunteers);
       setIncomeData(initialIncomeData);
       setExpenseData(initialExpenseData);
+      setOfflineBookings([]);
+      setOnlineBookings([]);
     }
   }, []);
 
@@ -84,10 +92,17 @@ const FinancePage = () => {
     0
   );
   
-  const totalBookingAmount = bookings.reduce(
-    (sum, booking) => sum + (booking.amount || 0), 
+  const offlineBookingTotal = offlineBookings.reduce(
+    (sum: number, booking: any) => sum + (booking.amount || 0), 
     0
   );
+  
+  const onlineBookingTotal = onlineBookings.reduce(
+    (sum: number, booking: any) => sum + (booking.amount || 0), 
+    0
+  );
+  
+  const totalBookingAmount = offlineBookingTotal + onlineBookingTotal;
 
   const totalIncome = incomeData.reduce((sum, item) => sum + item.value, 0);
   const totalExpense = expenseData.reduce((sum, item) => sum + item.value, 0);
@@ -141,6 +156,31 @@ const FinancePage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">{formatCurrency(totalVolunteerContribution)}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Additional Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">অফলাইন বুকিং আয়</CardTitle>
+            <ArrowUpIcon className="h-4 w-4 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">{formatCurrency(offlineBookingTotal)}</div>
+            <p className="text-xs text-muted-foreground">{offlineBookings.length} বুকিং</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">অনলাইন বুকিং আয়</CardTitle>
+            <ArrowUpIcon className="h-4 w-4 text-indigo-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-indigo-600">{formatCurrency(onlineBookingTotal)}</div>
+            <p className="text-xs text-muted-foreground">{onlineBookings.length} বুকিং</p>
           </CardContent>
         </Card>
       </div>

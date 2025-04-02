@@ -35,6 +35,8 @@ interface Booking {
   isPaid: boolean;
   bookingDate?: string;
   paymentType?: string;
+  formNumber?: string;
+  batchNumber?: string;
 }
 
 const initialIncomeData = [
@@ -360,9 +362,9 @@ const AdminPage = () => {
   
   const totalVolunteerContributions = localVolunteers.reduce((sum, volunteer) => sum + volunteer.contribution, 0);
   
-  if (!isLoggedIn) {
-    return (
-      <div className="container py-6">
+  return (
+    <div className="container py-6">
+      {!isLoggedIn ? (
         <div className="max-w-md mx-auto">
           <Card>
             <CardHeader>
@@ -398,405 +400,410 @@ const AdminPage = () => {
             </CardFooter>
           </Card>
         </div>
-      </div>
-    );
-  }
-  
-  return (
-    <div className="container py-6">
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>অ্যাডমিন ড্যাশবোর্ড</CardTitle>
-          <CardDescription>আয় বেয় খরচের তথ্য এবং ডোনেশন তথ্য আপডেট করুন</CardDescription>
-        </CardHeader>
-      </Card>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>আয় বেয় খরচ আপডেট</CardTitle>
-            <CardDescription>নতুন আয় বা ব্যয় যোগ করুন</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleDonationSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">বিবরণ</Label>
-                <Input 
-                  id="name" 
-                  name="name"
-                  value={donationForm.name} 
-                  onChange={handleDonationChange} 
-                  placeholder="বিবরণ লিখুন" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="amount">পরিমাণ</Label>
-                <Input 
-                  id="amount" 
-                  name="amount"
-                  type="number"
-                  value={donationForm.amount} 
-                  onChange={handleDonationChange} 
-                  placeholder="টাকার পরিমাণ লিখুন" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>ধরণ</Label>
-                <div className="flex gap-4">
-                  <div className="flex items-center">
-                    <Input
-                      type="radio"
-                      id="donation"
-                      name="type"
-                      value="donation"
-                      checked={donationForm.type === 'donation'}
-                      onChange={handleDonationChange}
-                      className="mr-2 h-4 w-4"
+      ) : (
+        <>
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>অ্যাডমিন ড্যাশবোর্ড</CardTitle>
+              <CardDescription>আয় বেয় খরচের তথ্য এবং ডোনেশন তথ্য আপডেট করুন</CardDescription>
+            </CardHeader>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>আয় বেয় খরচ আপডেট</CardTitle>
+                <CardDescription>নতুন আয় বা ব্যয় যোগ করুন</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleDonationSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">বিবরণ</Label>
+                    <Input 
+                      id="name" 
+                      name="name"
+                      value={donationForm.name} 
+                      onChange={handleDonationChange} 
+                      placeholder="বিবরণ লিখুন" 
                     />
-                    <Label htmlFor="donation" className="cursor-pointer">আয়</Label>
                   </div>
-                  <div className="flex items-center">
-                    <Input
-                      type="radio"
-                      id="expense"
-                      name="type"
-                      value="expense"
-                      checked={donationForm.type === 'expense'}
-                      onChange={handleDonationChange}
-                      className="mr-2 h-4 w-4"
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="amount">পরিমাণ</Label>
+                    <Input 
+                      id="amount" 
+                      name="amount"
+                      type="number"
+                      value={donationForm.amount} 
+                      onChange={handleDonationChange} 
+                      placeholder="টাকার পরিমাণ লিখুন" 
                     />
-                    <Label htmlFor="expense" className="cursor-pointer">ব্যয়</Label>
                   </div>
-                </div>
-              </div>
-              
-              <Button type="submit" className="w-full">
-                {editingItem ? "আপডেট করুন" : "সংরক্ষণ করুন"}
-              </Button>
-              
-              {editingItem && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => {
-                    setEditingItem(null);
-                    setDonationForm({
-                      name: '',
-                      amount: '',
-                      type: 'donation'
-                    });
-                  }}
-                >
-                  বাতিল করুন
-                </Button>
-              )}
-            </form>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>ডোনেশন তথ্য আপডেট</CardTitle>
-            <CardDescription>নতুন ডোনেশন তথ্য যোগ করুন</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleVolunteerSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="donorName">দাতার নাম</Label>
-                <Input 
-                  id="donorName" 
-                  name="name"
-                  value={volunteerForm.name} 
-                  onChange={handleVolunteerChange} 
-                  placeholder="দাতার নাম লিখুন" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="donorPhone">ফোন নম্বর</Label>
-                <Input 
-                  id="donorPhone" 
-                  name="phone"
-                  value={volunteerForm.phone} 
-                  onChange={handleVolunteerChange} 
-                  placeholder="ফোন নম্বর লিখুন" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="contribution">অবদান</Label>
-                <Input 
-                  id="contribution" 
-                  name="contribution"
-                  type="number"
-                  value={volunteerForm.contribution} 
-                  onChange={handleVolunteerChange} 
-                  placeholder="টাকার পরিমাণ লিখুন" 
-                />
-              </div>
-              
-              <Button type="submit" className="w-full">
-                {editingVolunteer ? "আপডেট করুন" : "সংরক্ষণ করুন"}
-              </Button>
-              
-              {editingVolunteer && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => {
-                    setEditingVolunteer(null);
-                    setVolunteerForm({
-                      name: '',
-                      phone: '',
-                      contribution: ''
-                    });
-                  }}
-                >
-                  বাতিল করুন
-                </Button>
-              )}
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Tabs defaultValue="donations">
-        <TabsList>
-          <TabsTrigger value="donations">ডোনেশন তথ্য</TabsTrigger>
-          <TabsTrigger value="income">আয়ের তালিকা</TabsTrigger>
-          <TabsTrigger value="expenses">খরচের তালিকা</TabsTrigger>
-          <TabsTrigger value="bookings">বুকিং তথ্য</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="donations" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>ডোনেশন তথ্য</CardTitle>
-              <CardDescription>বর্তমান ডোনেশন তথ্য দেখুন</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>নাম</TableHead>
-                    <TableHead>ফোন নম্বর</TableHead>
-                    <TableHead className="text-right">অবদান</TableHead>
-                    <TableHead className="text-right">পদক্ষেপ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {localVolunteers.map(volunteer => (
-                    <TableRow key={volunteer.id}>
-                      <TableCell className="font-medium">{volunteer.name}</TableCell>
-                      <TableCell>{volunteer.phone}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => handleEditVolunteer(volunteer)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-red-500"
-                            onClick={() => handleDeleteVolunteer(volunteer.id)}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={2}>মোট</TableCell>
-                    <TableCell className="text-right" colSpan={2}>{formatCurrency(totalVolunteerContributions)}</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="income" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>আয়ের তালিকা</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>বিবরণ</TableHead>
-                    <TableHead className="text-right">পরিমাণ</TableHead>
-                    <TableHead className="text-right">পদক্ষেপ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {incomeData.map(item => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.name}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => handleEditIncome(item)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-red-500"
-                            onClick={() => handleDeleteIncome(item.id)}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell>মোট আয়</TableCell>
-                    <TableCell className="text-right" colSpan={2}>
-                      {formatCurrency(incomeData.reduce((sum, item) => sum + item.value, 0))}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="expenses" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>খরচের তালিকা</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>বিবরণ</TableHead>
-                    <TableHead className="text-right">পরিমাণ</TableHead>
-                    <TableHead className="text-right">পদক্ষেপ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {expenseData.map(item => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.name}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => handleEditExpense(item)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-red-500"
-                            onClick={() => handleDeleteExpense(item.id)}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell>মোট ব্যয়</TableCell>
-                    <TableCell className="text-right" colSpan={2}>
-                      {formatCurrency(expenseData.reduce((sum, item) => sum + item.value, 0))}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="bookings" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>বুকিং তথ্য</CardTitle>
-              <CardDescription>অনলাইন ও অফলাইন বুকিংয়ের তালিকা</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>নাম</TableHead>
-                    <TableHead>ফোন</TableHead>
-                    <TableHead>ঠিকানা</TableHead>
-                    <TableHead>পেমেন্ট</TableHead>
-                    <TableHead>ধরণ</TableHead>
-                    <TableHead className="text-right">পরিমাণ</TableHead>
-                    <TableHead className="text-right">পদক্ষেপ</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {localBookings.map(booking => (
-                    <TableRow key={booking.id}>
-                      <TableCell className="font-medium">{booking.name}</TableCell>
-                      <TableCell>{booking.phone}</TableCell>
-                      <TableCell>{booking.address}</TableCell>
-                      <TableCell>
-                        <Badge variant={booking.isPaid ? "default" : "outline"}>
-                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={booking.paymentType === 'offline' ? "secondary" : "default"}>
-                          {booking.paymentType === 'offline' ? "অফলাইন" : "অনলাইন"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">{formatCurrency(booking.amount)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="text-red-500"
-                          onClick={() => handleDeleteBooking(booking.id, booking.paymentType || 'online')}
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={5}>মোট</TableCell>
-                    <TableCell className="text-right" colSpan={2}>
-                      {formatCurrency(localBookings.reduce((sum, booking) => sum + booking.amount, 0))}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                  
+                  <div className="space-y-2">
+                    <Label>ধরণ</Label>
+                    <div className="flex gap-4">
+                      <div className="flex items-center">
+                        <Input
+                          type="radio"
+                          id="donation"
+                          name="type"
+                          value="donation"
+                          checked={donationForm.type === 'donation'}
+                          onChange={handleDonationChange}
+                          className="mr-2 h-4 w-4"
+                        />
+                        <Label htmlFor="donation" className="cursor-pointer">আয়</Label>
+                      </div>
+                      <div className="flex items-center">
+                        <Input
+                          type="radio"
+                          id="expense"
+                          name="type"
+                          value="expense"
+                          checked={donationForm.type === 'expense'}
+                          onChange={handleDonationChange}
+                          className="mr-2 h-4 w-4"
+                        />
+                        <Label htmlFor="expense" className="cursor-pointer">ব্যয়</Label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button type="submit" className="w-full">
+                    {editingItem ? "আপডেট করুন" : "সংরক্ষণ করুন"}
+                  </Button>
+                  
+                  {editingItem && (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => {
+                        setEditingItem(null);
+                        setDonationForm({
+                          name: '',
+                          amount: '',
+                          type: 'donation'
+                        });
+                      }}
+                    >
+                      বাতিল করুন
+                    </Button>
+                  )}
+                </form>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>ডোনেশন তথ্য আপডেট</CardTitle>
+                <CardDescription>নতুন ডোনেশন তথ্য যোগ করুন</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleVolunteerSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="donorName">দাতার নাম</Label>
+                    <Input 
+                      id="donorName" 
+                      name="name"
+                      value={volunteerForm.name} 
+                      onChange={handleVolunteerChange} 
+                      placeholder="দাতার নাম লিখুন" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="donorPhone">ফোন নম্বর</Label>
+                    <Input 
+                      id="donorPhone" 
+                      name="phone"
+                      value={volunteerForm.phone} 
+                      onChange={handleVolunteerChange} 
+                      placeholder="ফোন নম্বর লিখুন" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="contribution">অবদান</Label>
+                    <Input 
+                      id="contribution" 
+                      name="contribution"
+                      type="number"
+                      value={volunteerForm.contribution} 
+                      onChange={handleVolunteerChange} 
+                      placeholder="টাকার পরিমাণ লিখুন" 
+                    />
+                  </div>
+                  
+                  <Button type="submit" className="w-full">
+                    {editingVolunteer ? "আপডেট করুন" : "সংরক্ষণ করুন"}
+                  </Button>
+                  
+                  {editingVolunteer && (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => {
+                        setEditingVolunteer(null);
+                        setVolunteerForm({
+                          name: '',
+                          phone: '',
+                          contribution: ''
+                        });
+                      }}
+                    >
+                      বাতিল করুন
+                    </Button>
+                  )}
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <Tabs defaultValue="donations">
+            <TabsList>
+              <TabsTrigger value="donations">ডোনেশন তথ্য</TabsTrigger>
+              <TabsTrigger value="income">আয়ের তালিকা</TabsTrigger>
+              <TabsTrigger value="expenses">খরচের তালিকা</TabsTrigger>
+              <TabsTrigger value="bookings">বুকিং তথ্য</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="donations" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>ডোনেশন তথ্য</CardTitle>
+                  <CardDescription>বর্তমান ডোনেশন তথ্য দেখুন</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>নাম</TableHead>
+                        <TableHead>ফোন নম্বর</TableHead>
+                        <TableHead className="text-right">অবদান</TableHead>
+                        <TableHead className="text-right">পদক্ষেপ</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {localVolunteers.map(volunteer => (
+                        <TableRow key={volunteer.id}>
+                          <TableCell className="font-medium">{volunteer.name}</TableCell>
+                          <TableCell>{volunteer.phone}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(volunteer.contribution)}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleEditVolunteer(volunteer)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-red-500"
+                                onClick={() => handleDeleteVolunteer(volunteer.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell>মোট</TableCell>
+                        <TableCell className="text-right" colSpan={2}>
+                          {formatCurrency(totalVolunteerContributions)}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="income" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>আয়ের তালিকা</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>বিবরণ</TableHead>
+                        <TableHead className="text-right">পরিমাণ</TableHead>
+                        <TableHead className="text-right">পদক্ষেপ</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {incomeData.map(item => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.name}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleEditIncome(item)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-red-500"
+                                onClick={() => handleDeleteIncome(item.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell>মোট আয়</TableCell>
+                        <TableCell className="text-right" colSpan={2}>
+                          {formatCurrency(incomeData.reduce((sum, item) => sum + item.value, 0))}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="expenses" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>খরচের তালিকা</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>বিবরণ</TableHead>
+                        <TableHead className="text-right">পরিমাণ</TableHead>
+                        <TableHead className="text-right">পদক্ষেপ</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {expenseData.map(item => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.name}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => handleEditExpense(item)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="text-red-500"
+                                onClick={() => handleDeleteExpense(item.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell>মোট ব্যয়</TableCell>
+                        <TableCell className="text-right" colSpan={2}>
+                          {formatCurrency(expenseData.reduce((sum, item) => sum + item.value, 0))}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="bookings" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>বুকিং তথ্য</CardTitle>
+                  <CardDescription>অনলাইন ও অফলাইন বুকিংয়ের তালিকা</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>নাম</TableHead>
+                        <TableHead>ফোন</TableHead>
+                        <TableHead>ঠিকানা</TableHead>
+                        <TableHead>ফর্ম/ব্যাচ নং</TableHead>
+                        <TableHead>পেমেন্ট</TableHead>
+                        <TableHead>ধরণ</TableHead>
+                        <TableHead className="text-right">পরিমাণ</TableHead>
+                        <TableHead className="text-right">পদক্ষেপ</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {localBookings.map(booking => (
+                        <TableRow key={booking.id}>
+                          <TableCell className="font-medium">{booking.name}</TableCell>
+                          <TableCell>{booking.phone}</TableCell>
+                          <TableCell>{booking.address}</TableCell>
+                          <TableCell>
+                            {booking.formNumber && <div>ফর্ম: {booking.formNumber}</div>}
+                            {booking.batchNumber && <div>ব্যাচ: {booking.batchNumber}</div>}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={booking.isPaid ? "default" : "outline"}>
+                              {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={booking.paymentType === 'offline' ? "secondary" : "default"}>
+                              {booking.paymentType === 'offline' ? "অফলাইন" : "অনলাইন"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">{formatCurrency(booking.amount)}</TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-red-500"
+                              onClick={() => handleDeleteBooking(booking.id, booking.paymentType || 'online')}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <TableRow>
+                        <TableCell colSpan={6}>মোট</TableCell>
+                        <TableCell className="text-right" colSpan={2}>
+                          {formatCurrency(localBookings.reduce((sum, booking) => sum + booking.amount, 0))}
+                        </TableCell>
+                      </TableRow>
+                    </TableFooter>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
     </div>
   );
 };

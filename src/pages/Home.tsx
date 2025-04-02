@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,13 +34,13 @@ const Home = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [formNumber, setFormNumber] = useState('');
   const [localVolunteers, setLocalVolunteers] = useState(volunteers);
   const [localOfflineBookings, setLocalOfflineBookings] = useState([]);
   const [localOnlineBookings, setLocalOnlineBookings] = useState([]);
   const [incomeData, setIncomeData] = useState(initialIncomeData);
   const [expenseData, setExpenseData] = useState(initialExpenseData);
 
-  // Load data from localStorage on component mount
   useEffect(() => {
     try {
       const savedVolunteers = JSON.parse(localStorage.getItem('volunteers') || JSON.stringify(volunteers));
@@ -57,7 +56,6 @@ const Home = () => {
       setExpenseData(savedExpenseData);
     } catch (err) {
       console.error('Error loading data from localStorage:', err);
-      // Fallback to initial data if there's an error
       setLocalVolunteers(volunteers);
       setLocalOfflineBookings([]);
       setLocalOnlineBookings([]);
@@ -90,13 +88,13 @@ const Home = () => {
       return;
     }
     
-    // Navigate to bKash payment page with user information
     navigate('/bkash-payment', {
       state: {
         userInfo: {
           name,
           phone,
-          address
+          address,
+          formNumber
         }
       }
     });
@@ -238,6 +236,15 @@ const Home = () => {
                     placeholder="আপনার ঠিকানা লিখুন" 
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="formNumber">ফর্ম নং</Label>
+                  <Input 
+                    id="formNumber" 
+                    value={formNumber} 
+                    onChange={(e) => setFormNumber(e.target.value)} 
+                    placeholder="ফর্ম নম্বর লিখুন" 
+                  />
+                </div>
                 <Button type="submit" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
               </form>
             </CardContent>
@@ -274,9 +281,19 @@ const Home = () => {
                             {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
                           </Badge>
                         </div>
+                        {booking.formNumber && (
+                          <div className="mt-1">
+                            <span className="text-sm">ফর্ম নং: {booking.formNumber}</span>
+                          </div>
+                        )}
+                        {booking.batchNumber && (
+                          <div className="mt-1">
+                            <span className="text-sm">ব্যাচ নং: {booking.batchNumber}</span>
+                          </div>
+                        )}
                       </CardContent>
                       <CardFooter className="flex justify-between">
-                        <Badge variant={booking.paymentType === 'offline' ? "secondary" : "primary"}>
+                        <Badge variant={booking.paymentType === 'offline' ? "secondary" : "default"}>
                           {booking.paymentType === 'offline' ? "অফলাইন" : "অনলাইন"}
                         </Badge>
                         <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>

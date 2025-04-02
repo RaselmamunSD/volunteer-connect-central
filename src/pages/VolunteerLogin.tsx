@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -23,7 +22,8 @@ const VolunteerLogin = () => {
     name: '',
     phone: '',
     address: '',
-    amount: ''
+    amount: '',
+    batchNumber: ''
   });
   
   // Form errors
@@ -107,6 +107,7 @@ const VolunteerLogin = () => {
       phone: bookingForm.phone,
       address: bookingForm.address,
       amount: parseFloat(bookingForm.amount) || 0,
+      batchNumber: bookingForm.batchNumber || '',
       isPaid: true, // Offline bookings are considered paid
       bookingDate: new Date().toISOString(),
       paymentType: 'offline'
@@ -129,7 +130,8 @@ const VolunteerLogin = () => {
       name: '',
       phone: '',
       address: '',
-      amount: ''
+      amount: '',
+      batchNumber: ''
     });
   };
   
@@ -194,6 +196,19 @@ const VolunteerLogin = () => {
                   className={bookingErrors.amount ? "border-red-500" : ""}
                 />
                 {bookingErrors.amount && <p className="text-sm text-red-500">{bookingErrors.amount}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="booking-batch">ব্যাচ নং</Label>
+                <Input 
+                  id="booking-batch" 
+                  name="batchNumber"
+                  value={bookingForm.batchNumber} 
+                  onChange={handleBookingChange} 
+                  placeholder="ব্যাচ নম্বর লিখুন"
+                  className={bookingErrors.batchNumber ? "border-red-500" : ""}
+                />
+                {bookingErrors.batchNumber && <p className="text-sm text-red-500">{bookingErrors.batchNumber}</p>}
               </div>
               
               <Button type="submit" className="w-full">অফলাইন বুকিং করুন</Button>

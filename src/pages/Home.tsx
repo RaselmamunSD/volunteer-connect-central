@@ -266,37 +266,46 @@ const Home = () => {
               <div className="space-y-4">
                 {onlineBookings.length > 0 ? (
                   onlineBookings.map((booking, index) => (
-                    <div key={booking.id || index} className="flex flex-col border rounded-lg p-4 bg-card">
-                      <div className="flex flex-row justify-between items-start mb-2">
-                        <div>
-                          <h3 className="text-base font-medium">{booking.name || 'অতিথি'}</h3>
-                          <p className="text-sm text-muted-foreground">{booking.phone || 'ফোন নম্বর নেই'}</p>
+                    <div key={booking.id || index} className="border rounded-lg p-4">
+                      <dl className="space-y-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <dt className="font-medium">নাম:</dt>
+                            <dd>{booking.name || 'অজানা'}</dd>
+                          </div>
+                          <Badge variant={booking.isPaid ? "default" : "outline"}>
+                            {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                          </Badge>
                         </div>
-                        <Badge variant={booking.isPaid ? "default" : "outline"}>
-                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        
                         <div>
-                          <p className="text-muted-foreground">ঠিকানা:</p>
-                          <p>{booking.address || 'ঠিকানা নেই'}</p>
+                          <dt className="font-medium">ফোন নাম্বার:</dt>
+                          <dd>{booking.phone || 'উল্লেখ নেই'}</dd>
                         </div>
+                        
+                        <div>
+                          <dt className="font-medium">ঠিকানা:</dt>
+                          <dd>{booking.address || 'উল্লেখ নেই'}</dd>
+                        </div>
+                        
                         {booking.batchNumber && (
                           <div>
-                            <p className="text-muted-foreground">ব্যাচ নং:</p>
-                            <p>{booking.batchNumber}</p>
+                            <dt className="font-medium">ব্যাচ নং:</dt>
+                            <dd>{booking.batchNumber}</dd>
                           </div>
                         )}
+                        
                         {booking.formNumber && (
                           <div>
-                            <p className="text-muted-foreground">ফর্ম নং:</p>
-                            <p>{booking.formNumber}</p>
+                            <dt className="font-medium">ফর্ম নং:</dt>
+                            <dd>{booking.formNumber}</dd>
                           </div>
                         )}
-                        <div className="md:col-span-2 mt-2">
-                          <p className="font-medium text-right">{formatCurrency(booking.amount || 0)}</p>
+                        
+                        <div className="pt-2 border-t mt-2">
+                          <p className="font-medium text-right">মূল্য: {formatCurrency(booking.amount || 0)}</p>
                         </div>
-                      </div>
+                      </dl>
                     </div>
                   ))
                 ) : (

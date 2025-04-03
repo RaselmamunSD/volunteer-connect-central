@@ -263,39 +263,44 @@ const Home = () => {
               <CardDescription>বিকাশ পেমেন্টের মাধ্যমে করা বুকিংয়ের তালিকা</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-4">
                 {onlineBookings.length > 0 ? (
-                  onlineBookings.map(booking => (
-                    <Card key={booking.id} className="event-card">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base">{booking.name}</CardTitle>
-                        <CardDescription>{booking.phone}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="pb-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm">{booking.address}</span>
-                          <Badge variant={booking.isPaid ? "default" : "outline"}>
-                            {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
-                          </Badge>
+                  onlineBookings.map((booking, index) => (
+                    <div key={booking.id || index} className="flex flex-col border rounded-lg p-4 bg-card">
+                      <div className="flex flex-row justify-between items-start mb-2">
+                        <div>
+                          <h3 className="text-base font-medium">{booking.name || 'অতিথি'}</h3>
+                          <p className="text-sm text-muted-foreground">{booking.phone || 'ফোন নম্বর নেই'}</p>
                         </div>
-                        {booking.formNumber && (
-                          <div className="mt-1">
-                            <span className="text-sm">ফর্ম নং: {booking.formNumber}</span>
-                          </div>
-                        )}
+                        <Badge variant={booking.isPaid ? "default" : "outline"}>
+                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">ঠিকানা:</p>
+                          <p>{booking.address || 'ঠিকানা নেই'}</p>
+                        </div>
                         {booking.batchNumber && (
-                          <div className="mt-1">
-                            <span className="text-sm">ব্যাচ নং: {booking.batchNumber}</span>
+                          <div>
+                            <p className="text-muted-foreground">ব্যাচ নং:</p>
+                            <p>{booking.batchNumber}</p>
                           </div>
                         )}
-                      </CardContent>
-                      <CardFooter>
-                        <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                      </CardFooter>
-                    </Card>
+                        {booking.formNumber && (
+                          <div>
+                            <p className="text-muted-foreground">ফর্ম নং:</p>
+                            <p>{booking.formNumber}</p>
+                          </div>
+                        )}
+                        <div className="md:col-span-2 mt-2">
+                          <p className="font-medium text-right">{formatCurrency(booking.amount || 0)}</p>
+                        </div>
+                      </div>
+                    </div>
                   ))
                 ) : (
-                  <p className="text-center col-span-3 py-8 text-muted-foreground">কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি</p>
+                  <p className="text-center py-8 text-muted-foreground">কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি</p>
                 )}
               </div>
             </CardContent>
@@ -307,4 +312,3 @@ const Home = () => {
 };
 
 export default Home;
-

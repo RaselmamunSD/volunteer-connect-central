@@ -244,7 +244,21 @@ const Home = () => {
                     placeholder="ব্যাচ নম্বর লিখুন" 
                   />
                 </div>
-                <Button type="submit" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Button type="submit" variant="outline" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
+                  <Button type="button" variant="default" className="w-full" onClick={() => navigate('/bkash-payment', {
+                    state: {
+                      userInfo: {
+                        name,
+                        phone,
+                        address,
+                        batchNumber
+                      }
+                    }
+                  })}>
+                    অনলাইন বুকিং করুন
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>

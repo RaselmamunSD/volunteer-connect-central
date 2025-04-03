@@ -251,53 +251,60 @@ const Home = () => {
         </div>
       </div>
       
-      <TabsContent value="online" className="mt-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>অনলাইন বুকিং</CardTitle>
-            <CardDescription>বিকাশ পেমেন্টের মাধ্যমে করা বুকিংয়ের তালিকা</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {onlineBookings.length > 0 ? (
-                onlineBookings.map(booking => (
-                  <Card key={booking.id} className="event-card">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{booking.name}</CardTitle>
-                      <CardDescription>{booking.phone}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">{booking.address}</span>
-                        <Badge variant={booking.isPaid ? "default" : "outline"}>
-                          {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
-                        </Badge>
-                      </div>
-                      {booking.formNumber && (
-                        <div className="mt-1">
-                          <span className="text-sm">ফর্ম নং: {booking.formNumber}</span>
+      <Tabs defaultValue="online">
+        <TabsList className="mb-4">
+          <TabsTrigger value="online">অনলাইন বুকিং</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="online">
+          <Card>
+            <CardHeader>
+              <CardTitle>অনলাইন বুকিং</CardTitle>
+              <CardDescription>বিকাশ পেমেন্টের মাধ্যমে করা বুকিংয়ের তালিকা</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {onlineBookings.length > 0 ? (
+                  onlineBookings.map(booking => (
+                    <Card key={booking.id} className="event-card">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">{booking.name}</CardTitle>
+                        <CardDescription>{booking.phone}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">{booking.address}</span>
+                          <Badge variant={booking.isPaid ? "default" : "outline"}>
+                            {booking.isPaid ? "পেমেন্ট সম্পন্ন" : "অপেক্ষমান"}
+                          </Badge>
                         </div>
-                      )}
-                      {booking.batchNumber && (
-                        <div className="mt-1">
-                          <span className="text-sm">ব্যাচ নং: {booking.batchNumber}</span>
-                        </div>
-                      )}
-                    </CardContent>
-                    <CardFooter>
-                      <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
-                    </CardFooter>
-                  </Card>
-                ))
-              ) : (
-                <p className="text-center col-span-3 py-8 text-muted-foreground">কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+                        {booking.formNumber && (
+                          <div className="mt-1">
+                            <span className="text-sm">ফর্ম নং: {booking.formNumber}</span>
+                          </div>
+                        )}
+                        {booking.batchNumber && (
+                          <div className="mt-1">
+                            <span className="text-sm">ব্যাচ নং: {booking.batchNumber}</span>
+                          </div>
+                        )}
+                      </CardContent>
+                      <CardFooter>
+                        <p className="text-sm font-medium">{formatCurrency(booking.amount)}</p>
+                      </CardFooter>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="text-center col-span-3 py-8 text-muted-foreground">কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
 
 export default Home;
+

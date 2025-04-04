@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -255,22 +254,7 @@ const Home = () => {
                     placeholder="ফর্ম নম্বর লিখুন" 
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button type="submit" variant="outline" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
-                  <Button type="button" variant="default" className="w-full" onClick={() => navigate('/bkash-payment', {
-                    state: {
-                      userInfo: {
-                        name,
-                        phone,
-                        address,
-                        batchNumber,
-                        formNumber
-                      }
-                    }
-                  })}>
-                    অনলাইন বুকিং করুন
-                  </Button>
-                </div>
+                <Button type="submit" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
               </form>
             </CardContent>
           </Card>
@@ -347,4 +331,3 @@ const Home = () => {
 };
 
 export default Home;
-

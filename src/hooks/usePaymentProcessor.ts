@@ -7,6 +7,8 @@ interface UserInfo {
   name?: string;
   phone?: string;
   address?: string;
+  batchNumber?: string;
+  formNumber?: string;
 }
 
 interface PaymentProcessorResult {
@@ -48,6 +50,9 @@ export const usePaymentProcessor = (userInfo: UserInfo = {}): PaymentProcessorRe
         const bookingData = {
           name: userInfo.name || 'অতিথি',
           phone: phoneNumber,
+          address: userInfo.address,
+          batchNumber: userInfo.batchNumber,
+          formNumber: userInfo.formNumber,
           amount: amount,
           isPaid: true,
           timestamp: new Date().toISOString(),

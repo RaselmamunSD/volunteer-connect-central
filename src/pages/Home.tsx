@@ -35,6 +35,7 @@ const Home = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
+  const [formNumber, setFormNumber] = useState('');
   const [localVolunteers, setLocalVolunteers] = useState(volunteers);
   const [localOfflineBookings, setLocalOfflineBookings] = useState([]);
   const [localOnlineBookings, setLocalOnlineBookings] = useState([]);
@@ -93,7 +94,8 @@ const Home = () => {
           name,
           phone,
           address,
-          batchNumber
+          batchNumber,
+          formNumber
         }
       }
     });
@@ -244,6 +246,15 @@ const Home = () => {
                     placeholder="ব্যাচ নম্বর লিখুন" 
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="formNumber">ফর্ম নং</Label>
+                  <Input 
+                    id="formNumber" 
+                    value={formNumber} 
+                    onChange={(e) => setFormNumber(e.target.value)} 
+                    placeholder="ফর্ম নম্বর লিখুন" 
+                  />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Button type="submit" variant="outline" className="w-full">বিকাশ পেমেন্ট-এ যান</Button>
                   <Button type="button" variant="default" className="w-full" onClick={() => navigate('/bkash-payment', {
@@ -252,7 +263,8 @@ const Home = () => {
                         name,
                         phone,
                         address,
-                        batchNumber
+                        batchNumber,
+                        formNumber
                       }
                     }
                   })}>
@@ -335,3 +347,4 @@ const Home = () => {
 };
 
 export default Home;
+

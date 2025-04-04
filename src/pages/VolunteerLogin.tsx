@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -145,9 +144,6 @@ const VolunteerLogin = () => {
       formNumber: '',
       batchNumber: ''
     });
-    
-    // Switch to the online tab to show the booking
-    setActiveTab('online');
   };
   
   if (isLoggedIn) {
@@ -160,9 +156,10 @@ const VolunteerLogin = () => {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="offline">অফলাইন বুকিং</TabsTrigger>
                 <TabsTrigger value="online">অনলাইন বুকিং</TabsTrigger>
+                <TabsTrigger value="offlineInfo">অফলাইন বুকিং এর তথ্য</TabsTrigger>
               </TabsList>
               
               <TabsContent value="offline">
@@ -246,9 +243,10 @@ const VolunteerLogin = () => {
                     {bookingErrors.batchNumber && <p className="text-sm text-red-500">{bookingErrors.batchNumber}</p>}
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <Button type="submit" className="w-full">অফলাইন বুকিং করুন</Button>
                     <Button type="button" onClick={() => setActiveTab('online')} variant="outline" className="w-full">অনলাইন বুকিং দেখুন</Button>
+                    <Button type="button" onClick={() => setActiveTab('offlineInfo')} variant="outline" className="w-full">অফলাইন বুকিং এর তথ্য</Button>
                   </div>
                 </form>
               </TabsContent>
@@ -303,9 +301,75 @@ const VolunteerLogin = () => {
                   ) : (
                     <p className="text-center py-8 text-muted-foreground">কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি</p>
                   )}
-                  <Button onClick={() => setActiveTab('offline')} variant="outline" className="w-full">
-                    অফলাইন বুকিং ফর্মে ফিরে যান
-                  </Button>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button onClick={() => setActiveTab('offline')} variant="outline" className="w-full">
+                      অফলাইন বুকিং ফর্মে ফিরে যান
+                    </Button>
+                    <Button onClick={() => setActiveTab('offlineInfo')} variant="outline" className="w-full">
+                      অফলাইন বুকিং এর তথ্য দেখুন
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="offlineInfo">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold mb-2">অফলাইন বুকিংয়ের তালিকা</h3>
+                  {localBookings.length > 0 ? (
+                    localBookings.map((booking, index) => (
+                      <div key={booking.id || index} className="border rounded-lg p-4">
+                        <dl className="space-y-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <dt className="font-medium">নাম:</dt>
+                              <dd>{booking.name || 'অজানা'}</dd>
+                            </div>
+                            <Badge variant="default">
+                              পেমেন্ট সম্পন্ন
+                            </Badge>
+                          </div>
+                          
+                          <div>
+                            <dt className="font-medium">ফোন নাম্বার:</dt>
+                            <dd>{booking.phone || 'উল্লেখ নেই'}</dd>
+                          </div>
+                          
+                          <div>
+                            <dt className="font-medium">ঠিকানা:</dt>
+                            <dd>{booking.address || 'উল্লেখ নেই'}</dd>
+                          </div>
+                          
+                          {booking.batchNumber && (
+                            <div>
+                              <dt className="font-medium">ব্যাচ নং:</dt>
+                              <dd>{booking.batchNumber}</dd>
+                            </div>
+                          )}
+                          
+                          {booking.formNumber && (
+                            <div>
+                              <dt className="font-medium">ফর্ম নং:</dt>
+                              <dd>{booking.formNumber}</dd>
+                            </div>
+                          )}
+                          
+                          <div className="pt-2 border-t mt-2">
+                            <p className="font-medium text-right">মূল্য: {formatCurrency(booking.amount || 0)}</p>
+                          </div>
+                        </dl>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center py-8 text-muted-foreground">কোনো অফলাইন বুকিং তথ্য পাওয়া যায়নি</p>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button onClick={() => setActiveTab('offline')} variant="outline" className="w-full">
+                      অফলাইন বুকিং ফর্মে ফিরে যান
+                    </Button>
+                    <Button onClick={() => setActiveTab('online')} variant="outline" className="w-full">
+                      অনলাইন বুকিং দেখুন
+                    </Button>
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>

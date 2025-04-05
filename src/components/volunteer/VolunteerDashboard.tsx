@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LogOut, Menu, Plus } from 'lucide-react';
 import BookingForm from './BookingForm';
 import BookingList from './BookingList';
 
@@ -11,85 +13,134 @@ interface VolunteerDashboardProps {
 }
 
 const VolunteerDashboard = ({ onLogout }: VolunteerDashboardProps) => {
-  const [activeTab, setActiveTab] = useState('offline');
-  const [localBookings, setLocalBookings] = useState<any[]>([]);
-  const [onlineBookings, setOnlineBookings] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState('addBooking');
+  const [offlineBookings, setOfflineBookings] = useState<any[]>([]);
   
-  // Load data from localStorage on component mount
+  // Load bookings from localStorage on component mount
   useEffect(() => {
     try {
       const savedOfflineBookings = JSON.parse(localStorage.getItem('offlineBookings') || '[]');
-      const savedOnlineBookings = JSON.parse(localStorage.getItem('onlineBookings') || '[]');
-      setLocalBookings(savedOfflineBookings);
-      setOnlineBookings(savedOnlineBookings);
+      setOfflineBookings(savedOfflineBookings);
     } catch (err) {
-      console.error('Error loading data from localStorage:', err);
-      setLocalBookings([]);
-      setOnlineBookings([]);
+      console.error('Error loading bookings from localStorage:', err);
+      setOfflineBookings([]);
     }
   }, []);
   
-  const handleBookingSubmit = (newBooking: any) => {
-    // Update local state
-    const updatedBookings = [...localBookings, newBooking];
-    setLocalBookings(updatedBookings);
-    
-    // Save to localStorage
-    localStorage.setItem('offlineBookings', JSON.stringify(updatedBookings));
+  // Save bookings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('offlineBookings', JSON.stringify(offlineBookings));
+  }, [offlineBookings]);
+  
+  const handleBookingSubmit = (booking: any) => {
+    setOfflineBookings(prev => [booking, ...prev]);
+    setActiveTab('offlineList');
+  };
+  
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
   };
 
   return (
     <div className="container py-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>স্বেচ্ছাসেবক পোর্টাল</CardTitle>
-          <CardDescription>স্বেচ্ছাসেবক হিসেবে অন্যদের জন্য আসন বুক করুন</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="offline">অফলাইন বুকিং</TabsTrigger>
-              <TabsTrigger value="online">অনলাইন বুকিং</TabsTrigger>
-              <TabsTrigger value="offlineInfo">অফলাইন বুকিং এর তথ্য</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="offline">
-              <BookingForm 
-                onSubmit={handleBookingSubmit} 
-                onTabChange={setActiveTab}
-              />
-            </TabsContent>
-            
-            <TabsContent value="online">
-              <BookingList 
-                bookings={onlineBookings}
-                title="অনলাইন বুকিংয়ের তালিকা"
-                emptyMessage="কোনো অনলাইন বুকিং তথ্য পাওয়া যায়নি"
-                onBack={() => setActiveTab('offline')}
-                onViewOther={() => setActiveTab('offlineInfo')}
-                backText="অফলাইন বুকিং ফর্মে ফিরে যান"
-                viewOtherText="অফলাইন বুকিং এর তথ্য দেখুন"
-              />
-            </TabsContent>
-            
-            <TabsContent value="offlineInfo">
-              <BookingList 
-                bookings={localBookings}
-                title="অফলাইন বুকিংয়ের তালিকা"
-                emptyMessage="কোনো অফলাইন বুকিং তথ্য পাওয়া যায়নি"
-                onBack={() => setActiveTab('offline')}
-                onViewOther={() => setActiveTab('online')}
-                backText="অফলাইন বুকিং ফর্মে ফিরে যান"
-                viewOtherText="অনলাইন বুকিং দেখুন"
-              />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={onLogout}>লগআউট</Button>
-          <p className="text-sm text-muted-foreground">সর্বশেষ আপডেটঃ {new Date().toLocaleDateString('bn-BD')}</p>
-        </CardFooter>
-      </Card>
+      <header className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">স্বেচ্ছাসেবক ড্যাশবোর্ড</h1>
+        <div className="flex items-center gap-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>স্বেচ্ছাসেবক মেনু</SheetTitle>
+              </SheetHeader>
+              <div className="mt-4 space-y-2">
+                <Button 
+                  onClick={() => setActiveTab('addBooking')} 
+                  variant={activeTab === 'addBooking' ? 'default' : 'outline'} 
+                  className="w-full justify-start"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  অফলাইন বুকিং তৈরি করুন
+                </Button>
+                <Button 
+                  onClick={() => setActiveTab('offlineList')} 
+                  variant={activeTab === 'offlineList' ? 'default' : 'outline'} 
+                  className="w-full justify-start"
+                >
+                  অফলাইন বুকিং এর তালিকা
+                </Button>
+                <Button 
+                  onClick={onLogout} 
+                  variant="outline" 
+                  className="w-full justify-start mt-4"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  লগআউট করুন
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <Button onClick={onLogout} variant="outline" className="hidden md:flex">
+            <LogOut className="mr-2 h-4 w-4" />
+            লগআউট করুন
+          </Button>
+        </div>
+      </header>
+      
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-3 hidden md:block">
+          <Card>
+            <CardHeader>
+              <CardTitle>মেনু</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button 
+                onClick={() => setActiveTab('addBooking')} 
+                variant={activeTab === 'addBooking' ? 'default' : 'outline'} 
+                className="w-full justify-start"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                অফলাইন বুকিং তৈরি করুন
+              </Button>
+              <Button 
+                onClick={() => setActiveTab('offlineList')} 
+                variant={activeTab === 'offlineList' ? 'default' : 'outline'} 
+                className="w-full justify-start"
+              >
+                অফলাইন বুকিং এর তালিকা
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="md:col-span-9">
+          <Card>
+            <CardContent className="pt-6">
+              {activeTab === 'addBooking' && (
+                <BookingForm 
+                  onSubmit={handleBookingSubmit} 
+                  onTabChange={handleTabChange} 
+                />
+              )}
+              
+              {activeTab === 'offlineList' && (
+                <BookingList 
+                  bookings={offlineBookings}
+                  title="অফলাইন বুকিং এর তালিকা"
+                  emptyMessage="কোনো অফলাইন বুকিং এখনো করা হয়নি"
+                  onBack={() => handleTabChange('addBooking')}
+                  onViewOther={() => handleTabChange('addBooking')}
+                  backText="ফিরে যান"
+                  viewOtherText="নতুন বুকিং করুন"
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

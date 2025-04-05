@@ -156,10 +156,9 @@ const BookingForm = ({ onSubmit, onTabChange }: BookingFormProps) => {
         {bookingErrors.batchNumber && <p className="text-sm text-red-500">{bookingErrors.batchNumber}</p>}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Button type="submit" className="w-full">অফলাইন বুকিং করুন</Button>
-        <Button type="button" onClick={() => onTabChange('online')} variant="outline" className="w-full">অনলাইন বুকিং দেখুন</Button>
-        <Button type="button" onClick={() => onTabChange('offlineInfo')} variant="outline" className="w-full">অফলাইন বুকিং এর তথ্য</Button>
+        <Button type="button" onClick={() => onTabChange('offlineList')} variant="outline" className="w-full">অফলাইন বুকিং এর তথ্য</Button>
       </div>
     </form>
   );

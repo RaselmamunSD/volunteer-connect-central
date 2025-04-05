@@ -3,17 +3,13 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import { validateForm } from '@/utils/helpers';
 
 interface BookingFormProps {
   onSubmit: (booking: any) => void;
-  onTabChange: (tab: string) => void;
 }
 
-const BookingForm = ({ onSubmit, onTabChange }: BookingFormProps) => {
-  const { toast } = useToast();
-  
+const BookingForm = ({ onSubmit }: BookingFormProps) => {
   const [bookingForm, setBookingForm] = useState({
     name: '',
     phone: '',
@@ -58,11 +54,6 @@ const BookingForm = ({ onSubmit, onTabChange }: BookingFormProps) => {
     };
     
     onSubmit(newBooking);
-    
-    toast({
-      title: "আসন বুকিং সফল হয়েছে",
-      description: "আসন বুকিং করার জন্য আপনাকে ধন্যবাদ!",
-    });
     
     // Reset form
     setBookingForm({
@@ -156,9 +147,8 @@ const BookingForm = ({ onSubmit, onTabChange }: BookingFormProps) => {
         {bookingErrors.batchNumber && <p className="text-sm text-red-500">{bookingErrors.batchNumber}</p>}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
         <Button type="submit" className="w-full">অফলাইন বুকিং করুন</Button>
-        <Button type="button" onClick={() => onTabChange('offlineList')} variant="outline" className="w-full">অফলাইন বুকিং এর তথ্য</Button>
       </div>
     </form>
   );

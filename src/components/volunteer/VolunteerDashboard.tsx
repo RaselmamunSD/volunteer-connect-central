@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Menu, Plus } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import BookingForm from './BookingForm';
 import BookingList from './BookingList';
 
@@ -62,8 +61,7 @@ const VolunteerDashboard = ({ onLogout }: VolunteerDashboardProps) => {
                   variant={activeTab === 'addBooking' ? 'default' : 'outline'} 
                   className="w-full justify-start"
                 >
-                  <Plus className="mr-2 h-4 w-4" />
-                  অফলাইন বুকিং তৈরি করুন
+                  অফলাইন বুকিং করুন
                 </Button>
                 <Button 
                   onClick={() => setActiveTab('offlineList')} 
@@ -102,8 +100,7 @@ const VolunteerDashboard = ({ onLogout }: VolunteerDashboardProps) => {
                 variant={activeTab === 'addBooking' ? 'default' : 'outline'} 
                 className="w-full justify-start"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                অফলাইন বুকিং তৈরি করুন
+                অফলাইন বুকিং করুন
               </Button>
               <Button 
                 onClick={() => setActiveTab('offlineList')} 

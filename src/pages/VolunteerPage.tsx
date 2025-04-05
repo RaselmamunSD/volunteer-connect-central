@@ -10,7 +10,7 @@ const VolunteerPage = () => {
     <div className="container py-6">
       <div className="banner-gradient rounded-lg p-6 mb-8 text-white">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">স্বেচ্ছাসেবক পোর্টাল</h1>
-        <p className="text-lg md:text-xl mb-4">অফলাইন আসন বুকিং করতে লগইন করুন</p>
+        <p className="text-lg md:text-xl mb-4">অফলাইন আসন বুকিং ফর্ম</p>
         <div className="flex flex-wrap gap-4">
           <Button asChild variant="secondary">
             <Link to="/volunteer/login">স্বেচ্ছাসেবক লগইন</Link>
@@ -23,14 +23,14 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <UserCheck className="h-5 w-5 text-primary" />
-              <CardTitle>অফলাইন বুকিং করুন</CardTitle>
+              <CardTitle>অফলাইন বুকিং ফর্ম</CardTitle>
             </div>
             <CardDescription>
-              পূর্নমিলনী অনুষ্ঠানে অফলাইন আসন বুকিং করতে লগইন করুন
+              পূর্নমিলনী অনুষ্ঠানে অফলাইন আসন বুকিং ফর্ম পূরণ করুন
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="mb-4">স্বেচ্ছাসেবক হিসেবে লগইন করে অফলাইন বুকিং করতে নিচের বাটনে ক্লিক করুন</p>
+            <p className="mb-4">স্বেচ্ছাসেবক হিসেবে লগইন করে অফলাইন বুকিং ফর্ম পূরণ করতে নিচের বাটনে ক্লিক করুন</p>
           </CardContent>
           <CardFooter className="justify-center">
             <Button asChild size="lg">
@@ -43,10 +43,10 @@ const VolunteerPage = () => {
           <CardHeader>
             <div className="flex items-center gap-2">
               <PenLine className="h-5 w-5 text-primary" />
-              <CardTitle>অফলাইন বুকিং সম্পর্কে</CardTitle>
+              <CardTitle>অফলাইন বুকিং ফর্ম সম্পর্কে</CardTitle>
             </div>
             <CardDescription>
-              অফলাইন বুকিং প্রক্রিয়া সম্পর্কে জানুন
+              অফলাইন বুকিং ফর্ম সম্পর্কে জানুন
             </CardDescription>
           </CardHeader>
           <CardContent>

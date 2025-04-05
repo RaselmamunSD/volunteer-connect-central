@@ -61,7 +61,7 @@ const VolunteerDashboard = ({ onLogout }: VolunteerDashboardProps) => {
                   variant={activeTab === 'addBooking' ? 'default' : 'outline'} 
                   className="w-full justify-start"
                 >
-                  অফলাইন বুকিং করুন
+                  অফলাইন বুকিং ফর্ম
                 </Button>
                 <Button 
                   onClick={() => setActiveTab('offlineList')} 
@@ -100,7 +100,7 @@ const VolunteerDashboard = ({ onLogout }: VolunteerDashboardProps) => {
                 variant={activeTab === 'addBooking' ? 'default' : 'outline'} 
                 className="w-full justify-start"
               >
-                অফলাইন বুকিং করুন
+                অফলাইন বুকিং ফর্ম
               </Button>
               <Button 
                 onClick={() => setActiveTab('offlineList')} 

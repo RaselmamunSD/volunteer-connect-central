@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { volunteers, bookings } from '@/data/mockData';
 import { calculateTotal, formatCurrency } from '@/utils/helpers';
@@ -219,7 +220,7 @@ const Home = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">ফোন নম্বর</Label>
+                  <Label htmlFor="phone">��োন নম্বর</Label>
                   <Input 
                     id="phone" 
                     value={phone} 
@@ -260,6 +261,45 @@ const Home = () => {
           </Card>
         </div>
       </div>
+      
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>অফলাইন বুকিং তথ্য</CardTitle>
+          <CardDescription>স্বেচ্ছাসেবকদের দ্বারা করা অফলাইন বুকিংয়ের তালিকা</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {offlineBookings.length > 0 ? (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>নাম</TableHead>
+                    <TableHead>ফোন নম্বর</TableHead>
+                    <TableHead>ঠিকানা</TableHead>
+                    <TableHead>ব্যাচ নং</TableHead>
+                    <TableHead>ফর্ম নং</TableHead>
+                    <TableHead className="text-right">টাকার পরিমাণ</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {offlineBookings.map((booking, index) => (
+                    <TableRow key={booking.id || index}>
+                      <TableCell className="font-medium">{booking.name || 'অজানা'}</TableCell>
+                      <TableCell>{booking.phone || 'উল্লেখ নেই'}</TableCell>
+                      <TableCell>{booking.address || 'উল্লেখ নেই'}</TableCell>
+                      <TableCell>{booking.batchNumber || 'উল্লেখ নেই'}</TableCell>
+                      <TableCell>{booking.formNumber || 'উল্লেখ নেই'}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(booking.amount || 0)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <p className="text-center py-8 text-muted-foreground">কোনো অফলাইন বুকিং তথ্য পাওয়া যায়নি</p>
+          )}
+        </CardContent>
+      </Card>
       
       <Tabs defaultValue="online">
         <TabsList className="mb-4">

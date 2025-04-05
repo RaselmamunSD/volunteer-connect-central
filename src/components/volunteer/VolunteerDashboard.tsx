@@ -31,7 +31,12 @@ const VolunteerDashboard = ({ onLogout }: VolunteerDashboardProps) => {
   }, [offlineBookings]);
   
   const handleBookingSubmit = (booking: any) => {
-    setOfflineBookings(prev => [booking, ...prev]);
+    // Add the booking to the top of the list
+    const updatedBookings = [booking, ...offlineBookings];
+    setOfflineBookings(updatedBookings);
+    
+    // Store the updated list in localStorage so it's available to the home page
+    localStorage.setItem('offlineBookings', JSON.stringify(updatedBookings));
     
     toast({
       title: "আসন বুকিং সফল হয়েছে",
